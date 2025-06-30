@@ -64,7 +64,6 @@ import android.media.MediaCodecList;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.os.SystemClock;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -76,6 +75,7 @@ import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.util.Property;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
@@ -697,6 +697,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     HashSet<Integer> notificationsExceptionTopics = new HashSet<>();
 
     private CharacterStyle loadingSpan;
+
+    private float secondStepProfileSize = 72f;
+    private float secondStepProfileRadius = 36f;
 
     private final Property<ProfileActivity, Float> HEADER_SHADOW = new AnimationProperties.FloatProperty<ProfileActivity>("headerShadow") {
         @Override
@@ -4817,6 +4820,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         avatarContainer = new FrameLayout(context);
         avatarContainer2 = new FrameLayout(context) {
+
             CanvasButton canvasButton;
 
             @Override
@@ -4897,10 +4901,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         fallbackImage = new ImageReceiver(avatarContainer2);
         fallbackImage.setRoundRadius(AndroidUtilities.dp(11));
         AndroidUtilities.updateViewVisibilityAnimated(avatarContainer2, true, 1f, false);
-        frameLayout.addView(avatarContainer2, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.START, 0, 0, 0, 0));
+        frameLayout.addView(avatarContainer2, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER, 0, 0, 0, 0));
         avatarContainer.setPivotX(0);
         avatarContainer.setPivotY(0);
-        avatarContainer2.addView(avatarContainer, LayoutHelper.createFrame(56, 56, Gravity.TOP | Gravity.CLIP_HORIZONTAL,  0, 0, 0, 0));
+        avatarContainer.setBackgroundColor(R.color.cast_seekbar_progress_thumb_color);
+        avatarContainer2.addView(avatarContainer, LayoutHelper.createFrame(secondStepProfileSize, secondStepProfileSize, Gravity.TOP | Gravity.CENTER, 0, 0, 0, 0));
+        avatarContainer2.setBackgroundColor(R.color.cast_seekbar_tooltip_background_color);
         avatarImage = new AvatarImageView(context) {
             @Override
             public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
@@ -5663,6 +5669,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         checkPhotoDescriptionAlpha();
         avatarContainer.setScaleX(avatarScale);
         avatarContainer.setScaleY(avatarScale);
+        onAvartarXChanged();
         avatarContainer.setTranslationX(AndroidUtilities.lerp(avatarX, 0, value));
         avatarContainer.setTranslationY(AndroidUtilities.lerp((float) Math.ceil(avatarY), 0f, value));
         avatarImage.setRoundRadius((int) AndroidUtilities.lerp(getSmallAvatarRoundRadius(), 0f, value));
@@ -5764,8 +5771,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         avatarImage.setForegroundAlpha(value);
 
         final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) avatarContainer.getLayoutParams();
-        params.width = (int) AndroidUtilities.lerp(AndroidUtilities.dpf2(42f), listView.getMeasuredWidth() / avatarScale, value);
-        params.height = (int) AndroidUtilities.lerp(AndroidUtilities.dpf2(42f), (extraHeight + newTop) / avatarScale, value);
+        params.width = (int) AndroidUtilities.lerp(AndroidUtilities.dpf2(secondStepProfileSize), listView.getMeasuredWidth() / avatarScale, value);
+        params.height = (int) AndroidUtilities.lerp(AndroidUtilities.dpf2(secondStepProfileSize), (extraHeight + newTop) / avatarScale, value);
         params.leftMargin = 0;
         params.gravity = Gravity.CENTER_HORIZONTAL;
         avatarContainer.requestLayout();
@@ -5773,14 +5780,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         updateCollectibleHint();
     }
 
+    private void onAvartarXChanged() {
+        System.out.println("XXXXXX avatarX " + avatarX);
+    }
+
     private int getSmallAvatarRoundRadius() {
         if (chatId != 0) {
             TLRPC.Chat chatLocal = getMessagesController().getChat(chatId);
             if (ChatObject.isForum(chatLocal)) {
-                return AndroidUtilities.dp(needInsetForStories() ? 11 : 16);
+                return AndroidUtilities.dp(needInsetForStories() ? 11 : secondStepProfileRadius);
             }
         }
-        return AndroidUtilities.dp(21);
+        return AndroidUtilities.dp(secondStepProfileRadius);
     }
 
     private void updateTtlIcon() {
@@ -7326,6 +7337,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             }
 
             avatarX = -AndroidUtilities.dpf2(47f) * diff;
+            onAvartarXChanged();
             avatarY = (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + ActionBar.getCurrentActionBarHeight() / 2.0f * (1.0f + diff) - 21 * AndroidUtilities.density + 27 * AndroidUtilities.density * diff + actionBar.getTranslationY();
 
             float h = openAnimationInProgress ? initialAnimationExtraHeight : extraHeight;
