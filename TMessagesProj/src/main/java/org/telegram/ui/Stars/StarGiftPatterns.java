@@ -146,6 +146,38 @@ public class StarGiftPatterns {
         43.33f, 1, 18.66f, .3186f
     };
 
+    private static float tolerence1 = 1f;
+    private static float tolerence2 = 0.95f;
+    private static float tolerence3 = 0.75f;
+    private static float tolerence4 = 0.6f;
+    private static final float[] profileCenter = new float[] {
+            // 1st row
+            -45f, -80f, 16f, 0.18f, tolerence4,
+            45f, -80f, 16f, 0.18f, tolerence4,
+            // 2nd row
+            -100f, -55f, 16f, 0.18f, tolerence2,
+            0f, -66f, 20f, 0.3f, tolerence2,
+            100f, -55f, 16f, 0.18f, tolerence2,
+            // 3rd row
+            -60f, -38f, 20f, 0.3f, tolerence1,
+            60f, -38f, 20f, 0.3f, tolerence1,
+            // center
+            -135f, 0, 16f, 0.18f, tolerence4,
+            -80f, 0, 20f, 0.3f, tolerence3,
+            80f, 0, 20f, 0.3f, tolerence3,
+            135f, 0, 16f, 0.18f, tolerence4,
+            // 4th row
+            -60f, 38f, 20f, 0.3f, tolerence1,
+            60f, 38f, 20f, 0.3f, tolerence1,
+            // 5th row
+            -100f, 55f, 16f, 0.18f, tolerence2,
+            0f, 66f, 20f, 0.3f, tolerence2,
+            100f, 55f, 16f, 0.18f, tolerence2,
+            // 6th row
+            -45f, 80f, 16f, 0.18f, tolerence4,
+            45f, 80f, 16f, 0.18f, tolerence4
+    };
+
     public static void drawProfilePattern(Canvas canvas, Drawable pattern, float w, float h, float alpha, float full) {
         if (alpha <= 0.0f) return;
 
@@ -209,4 +241,38 @@ public class StarGiftPatterns {
         }
     }
 
+    public static void drawProfileCenteredPattern(Canvas canvas, Drawable pattern, float w, float h, float alpha) {
+        System.out.println("XXX " + w + " " + h + " " + alpha);
+        final float centerX = w/2;
+        final float l = 0, centerY = h/(2/alpha);
+
+        for (int i=0; i < profileCenter.length; i += 5) {
+            final float t = profileCenter[i + 4];
+            float x = profileCenter[i];
+            if (alpha <= t && alpha >0) {
+                x = (profileCenter[i] / (t/alpha));
+                System.out.println("YYYY " + profileCenter[i] + " " + (profileCenter[i] / (t/alpha)) + " " + alpha +" " +t + " " + t/alpha );
+            }
+            float y = profileCenter[i + 1];
+            if (alpha <= t && alpha >0) {
+                y = (profileCenter[i+1] / (t/alpha));
+            }
+            if (alpha == 0) {
+                x = 0;
+                y = 0;
+            }
+            final float size = profileCenter[i + 2] * alpha;
+            final float thisAlpha = profileCenter[i + 3];
+
+            pattern.setBounds(
+                    (int) (centerX + dpf2(x) - dpf2(size) / 2.0f),
+                    (int) (centerY + dpf2(y) - dpf2(size) / 2.0f),
+                    (int) (centerX + dpf2(x) + dpf2(size) / 2.0f),
+                    (int) (centerY + dpf2(y) + dpf2(size) / 2.0f)
+            );
+
+            pattern.setAlpha((int) (0xFF * alpha * thisAlpha));
+            pattern.draw(canvas);
+        }
+    }
 }
