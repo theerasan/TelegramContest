@@ -1003,8 +1003,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     }
     
     // my new variable
-    private static float secoundStepHeight = 188f;
-    private static float avatarSize = 66f;
+    private static float secoundStepHeight = 192f;
+    private static float avatarSize = 62f;
+    private static float buttonsHeight = 24f;
+
+    private LinearLayout buttonsContainer;
 
     private class TopView extends FrameLayout {
 
@@ -2775,6 +2778,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             avatarsViewPager.setVisibility(View.GONE);
                             avatarImage.setForegroundAlpha(1f);
                             avatarContainer.setVisibility(View.VISIBLE);
+                            buttonsContainer.setVisibility(View.VISIBLE);
                             doNotSetForeground = true;
                             final View view = layoutManager.findViewByPosition(0);
                             if (view != null) {
@@ -2930,6 +2934,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         overlaysView.setAlphaValue(1.0f, false);
                         avatarImage.setForegroundAlpha(1.0f);
                         avatarContainer.setVisibility(View.GONE);
+                        buttonsContainer.setVisibility(View.GONE);
                         avatarsViewPager.resetCurrentItem();
                         avatarsViewPager.setVisibility(View.VISIBLE);
                         if (showStatusButton != null) {
@@ -3650,6 +3655,17 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         contentView.needBlur = true;
         FrameLayout frameLayout = (FrameLayout) fragmentView;
 
+        topView = new TopView(context);
+        topView.setBackgroundColorId(peerColor, false);
+        topView.setBackgroundColor(getThemedColor(Theme.key_avatar_backgroundActionBarBlue));
+        frameLayout.addView(topView);
+
+        buttonsContainer = new LinearLayout(context);
+        buttonsContainer.setBackgroundColor(R.color.common_google_signin_btn_text_dark_default);
+        buttonsContainer.setPivotY(0);
+        buttonsContainer.setPivotX(frameLayout.getMeasuredWidth() / 2f);
+        frameLayout.addView(buttonsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.dp(buttonsHeight), Gravity.TOP | Gravity.CENTER));
+
         listView = new ClippedListView(context) {
 
             private VelocityTracker velocityTracker;
@@ -3853,6 +3869,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         listView.setLayoutManager(layoutManager);
         listView.setGlowColor(0);
         listView.setAdapter(listAdapter);
+
+
         frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT));
         listView.setOnItemClickListener((view, position, x, y) -> {
             if (getParentActivity() == null) {
@@ -4825,10 +4843,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             listView.setPadding(0, AndroidUtilities.dp(secoundStepHeight), 0, 0);
         }
 
-        topView = new TopView(context);
-        topView.setBackgroundColorId(peerColor, false);
-        topView.setBackgroundColor(getThemedColor(Theme.key_avatar_backgroundActionBarBlue));
-        frameLayout.addView(topView);
         contentView.blurBehindViews.add(topView);
 
         animatedStatusView = new DrawerProfileCell.AnimatedStatusView(context, 20, 60);
@@ -5241,6 +5255,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         giftsView = new ProfileGiftsView(context, currentAccount, getDialogId(), avatarContainer, avatarImage, resourcesProvider);
         avatarContainer2.addView(giftsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         updateProfileData(true);
+
+
 
         writeButton = new RLottieImageView(context);
         writeButtonSetBackground();
@@ -5683,6 +5699,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         checkPhotoDescriptionAlpha();
         avatarContainer.setScaleX(avatarScale);
         avatarContainer.setScaleY(avatarScale);
+        buttonsContainer.setAlpha(AndroidUtilities.lerp(1f, 0f, value));
+        buttonsContainer.setScaleY(AndroidUtilities.lerp(1, 1.2f, value));
+        float buttonContainerY = (AndroidUtilities.dp(30) + onlineY + onlineTextView[0].getMeasuredHeight());
+        buttonsContainer.setTranslationY(AndroidUtilities.lerp(buttonsContainer.getY(), buttonContainerY, value));
         avatarX = (avatarContainer2.getMeasuredWidth() - (avatarContainer.getMeasuredWidth() * avatarScale)) /2f;
         avatarContainer.setTranslationX(AndroidUtilities.lerp((float) avatarX, 0f, value));
         avatarContainer.setTranslationY(AndroidUtilities.lerp((float) Math.ceil(avatarY), 0f, value));
@@ -5709,6 +5729,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         if (extraHeight > AndroidUtilities.dp(secoundStepHeight) && expandProgress < 0.33f) {
             refreshNameAndOnlineXY();
+            refreshButtonsContainer();
             refreshAvatarX();
         }
 
@@ -7413,6 +7434,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                 expandAnimator.removeListener(this);
                                 topView.setBackgroundColor(Color.BLACK);
                                 avatarContainer.setVisibility(View.GONE);
+                                buttonsContainer.setVisibility(View.GONE);
                                 avatarsViewPager.setVisibility(View.VISIBLE);
                             }
                         });
@@ -7489,6 +7511,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         }
                         avatarImage.setForegroundAlpha(1f);
                         avatarContainer.setVisibility(View.VISIBLE);
+                        buttonsContainer.setScaleY(0f);
+                        buttonsContainer.setAlpha(0f);
+                        buttonsContainer.setVisibility(View.VISIBLE);
                         avatarsViewPager.setVisibility(View.GONE);
                         expandAnimator.start();
                     }
@@ -7498,6 +7523,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
                     if (expandAnimator == null || !expandAnimator.isRunning()) {
                         refreshNameAndOnlineXY();
+                        refreshButtonsContainer();
                         refreshAvatarX();
                         nameTextView[1].setTranslationX(nameX);
                         nameTextView[1].setTranslationY(nameY);
@@ -7595,6 +7621,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     starFgItem.setTranslationY(avatarContainer.getY() + AndroidUtilities.dp(24) + extra);
                 }
                 refreshNameAndOnlineXY();
+                refreshButtonsContainer();
                 if (showStatusButton != null) {
                     showStatusButton.setAlpha((int) (0xFF * diff));
                 }
@@ -7713,6 +7740,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         nameY = (float) Math.floor(avatarY) + (AndroidUtilities.dp(16f) + (avatarContainer.getMeasuredHeight()) * avatarScale);
         onlineX = 0;
         onlineY = nameY + AndroidUtilities.dp(24);
+    }
+
+    private void refreshButtonsContainer() {
+        if (extraHeight < AndroidUtilities.dp(secoundStepHeight)) {
+            float diff = 1 - (extraHeight / AndroidUtilities.dp(secoundStepHeight));
+            float factor =  1 - (4 * diff * diff) ;
+            buttonsContainer.setScaleY(AndroidUtilities.lerp(0f, 1f, factor));
+            buttonsContainer.setAlpha(AndroidUtilities.lerp(0f, 1f, factor));
+        }
+        buttonsContainer.setTranslationY((AndroidUtilities.dp(30) + onlineY + onlineTextView[0].getMeasuredHeight()));
     }
 
     private void refreshAvatarX() {
@@ -8820,6 +8857,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         playProfileAnimation = 1;
                         avatarImage.setForegroundAlpha(1.0f);
                         avatarContainer.setVisibility(View.GONE);
+                        buttonsContainer.setVisibility(View.GONE);
                         avatarsViewPager.resetCurrentItem();
                         avatarsViewPager.setVisibility(View.VISIBLE);
                     }
@@ -10877,6 +10915,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         needLayout(true);
 
         avatarContainer.setVisibility(View.VISIBLE);
+        buttonsContainer.setVisibility(View.VISIBLE);
         nameTextView[1].setVisibility(View.VISIBLE);
         onlineTextView[1].setVisibility(View.VISIBLE);
         onlineTextView[3].setVisibility(View.VISIBLE);
@@ -10924,6 +10963,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             emptyView.setAlpha(1f - progressHalf);
 
             avatarContainer.setAlpha(progressHalf);
+            buttonsContainer.setAlpha(progressHalf);
             if (storyView != null) {
                 storyView.setAlpha(progressHalf);
             }
@@ -11004,6 +11044,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         actionBar.onSearchFieldVisibilityChanged(enter);
 
         avatarContainer.setVisibility(hide);
+        buttonsContainer.setVisibility(hide);
         if (storyView != null) {
             storyView.setVisibility(hide);
         }
@@ -11022,6 +11063,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         searchItem.setVisibility(hide);
 
         avatarContainer.setAlpha(1f);
+        buttonsContainer.setAlpha(1f);
         if (storyView != null) {
             storyView.setAlpha(1f);
         }
