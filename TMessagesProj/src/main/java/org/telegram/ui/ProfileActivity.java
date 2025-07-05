@@ -4933,7 +4933,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         AndroidUtilities.updateViewVisibilityAnimated(avatarContainer2, true, 1f, false);
         frameLayout.addView(avatarContainer2, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.START, 0, 0, 0, 0));
         avatarContainer.setPivotY(0);
-        avatarContainer2.addView(avatarContainer, LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
+
         avatarImage = new AvatarImageView(context) {
             @Override
             public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
@@ -5257,9 +5257,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         avatarContainer2.addView(storyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         giftsView = new ProfileGiftsView(context, currentAccount, getDialogId(), avatarContainer, avatarImage, resourcesProvider);
         avatarContainer2.addView(giftsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+        avatarContainer2.addView(avatarContainer, LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
+        avatarContainer.setAlpha(0.2f);
         updateProfileData(true);
-
-
 
         writeButton = new RLottieImageView(context);
         writeButtonSetBackground();
@@ -5704,7 +5704,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         avatarContainer.setScaleY(avatarScale);
         buttonsContainer.setAlpha(AndroidUtilities.lerp(1f, 0f, value));
         buttonsContainer.setScaleY(AndroidUtilities.lerp(1, 1.2f, value));
-        float buttonContainerY = (AndroidUtilities.dp(30) + onlineY + onlineTextView[0].getMeasuredHeight());
+        float buttonContainerY = nameY + AndroidUtilities.dp(52);//onlineY + (onlineTextView[0].getMeasuredHeight());
+        System.out.println("BUTTON Y2 " + nameY + " " + value + " " + buttonContainerY + " " + onlineY + " " + onlineTextView[0].getMeasuredHeight());
         buttonsContainer.setTranslationY(AndroidUtilities.lerp(buttonsContainer.getY(), buttonContainerY, value));
         avatarX = (avatarContainer2.getMeasuredWidth() - (avatarContainer.getMeasuredWidth() * avatarScale)) /2f;
         avatarContainer.setTranslationX(AndroidUtilities.lerp((float) avatarX, 0f, value));
@@ -7807,7 +7808,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             buttonsContainer.setScaleY(AndroidUtilities.lerp(0f, 1f, factor));
             buttonsContainer.setAlpha(AndroidUtilities.lerp(0f, 1f, factor));
         }
-        buttonsContainer.setTranslationY((AndroidUtilities.dp(30) + onlineY + onlineTextView[0].getMeasuredHeight()));
+        final float value = currentExpandAnimatorValue = AndroidUtilities.lerp(expandAnimatorValues, 0);
+        float buttonContainerY = nameY + AndroidUtilities.dp(52); //onlineY + (onlineTextView[0].getMeasuredHeight());
+        System.out.println("BUTTON Y " + onlineY + " " + buttonContainerY + " " + (onlineTextView[0].getMeasuredHeight()));
+        buttonsContainer.setTranslationY(buttonContainerY);
     }
 
     private boolean isStartCollapsing() {
