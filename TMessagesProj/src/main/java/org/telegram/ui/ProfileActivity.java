@@ -7531,7 +7531,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         refreshNameAndOnlineXY();
                         refreshButtonsContainer();
                         refreshAvatarXY();
-//                        nameTextView[1].setTranslationX(nameX);
+                        nameTextView[1].setTranslationX(nameX);
                         nameTextView[1].setTranslationY(nameY);
                         onlineTextView[1].setTranslationX(onlineX + customPhotoOffset);
                         onlineTextView[1].setTranslationY(onlineY);
@@ -7542,9 +7542,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
             } else {
                 float step = extraHeight/AndroidUtilities.dp(secoundStepHeight);
-                avatarY = AndroidUtilities.lerp(-((avatarContainer.getMeasuredHeight() * avatarScale)) + AndroidUtilities.dp(14), avatarY , step);
-//                nameX = 0;
-                System.out.println("XXXX put top " + step);
+                avatarY = AndroidUtilities.lerp(-((avatarContainer.getMeasuredHeight() * avatarScale)), avatarY , step);
             }
 
             if (openAnimationInProgress && playProfileAnimation == 2) {
@@ -7636,7 +7634,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 //                nameY = (float) Math.floor(avatarY) + AndroidUtilities.dp(1.3f) + AndroidUtilities.dp(7) * diff + titleAnimationsYDiff * (1f - avatarAnimationProgress);
                 onlineX = AndroidUtilities.density * diff;
 //                onlineY = (float) Math.floor(avatarY) + AndroidUtilities.dp(24) + (float) Math.floor(11 * AndroidUtilities.density) * diff;
-                nameY = (float) Math.floor(avatarY) + (AndroidUtilities.dp(16f) + (avatarContainer.getMeasuredHeight()) * avatarScale);
+                float newNameY = (float) Math.floor(avatarY) + (AndroidUtilities.dp(16f) + (avatarContainer.getMeasuredHeight()) * avatarScale);
+                float minNameY = AndroidUtilities.dp(12) + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
+                if (newNameY > minNameY) {
+                    nameY = newNameY;
+                } else  {
+                    nameY = minNameY;
+                }
+
+                System.out.println("NAME YYY2 " + nameY);
+
                 onlineY = nameY + AndroidUtilities.dp(24);
                 refreshButtonsContainer();
                 if (isStartCollapsing()) {
@@ -7764,22 +7771,28 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     }
 
     private void refreshNameAndOnlineXY() {
-        nameY = (float) Math.floor(avatarY) + (AndroidUtilities.dp(16f) + (avatarContainer.getMeasuredHeight()) * avatarScale);
+        float newNameY = (float) Math.floor(avatarY) + (AndroidUtilities.dp(16f) + (avatarContainer.getMeasuredHeight()) * avatarScale);
+        if (newNameY > AndroidUtilities.dp(14)) {
+            nameY = newNameY;
+        } else  {
+            nameY = AndroidUtilities.dp(14);
+        }
+        System.out.println("NAME YYY" + nameY);
         onlineY = nameY + AndroidUtilities.dp(24);
         if (isStartCollapsing()) {
             float diff = getCollapsingProgress();
             float factor =  1 - (4 * diff * diff) ;
             //System.out.println("wewew " + nameTextView[0].getTextStartX() + " " +nameTextView[0].getMeasuredWidth());
 
-            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) onlineTextView[0].getLayoutParams();
-            layoutParams.width = android.app.ActionBar.LayoutParams.WRAP_CONTENT;
-
-            System.out.println("wewew " + onlineTextView[0].getMeasuredWidth() + " " + layoutParams.width );
+//            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) onlineTextView[0].getLayoutParams();
+//            layoutParams.width = android.app.ActionBar.LayoutParams.WRAP_CONTENT;
+//
+//            System.out.println("wewew " + onlineTextView[0].getMeasuredWidth() + " " + layoutParams.width );
 //            onlineX = -1 * avatarContainer2.getMeasuredWidth()/2f;
 //            onlineX = -120;
         } else {
-//            nameX = 0;
-//            onlineX = 0;
+            nameX = 0;
+            onlineX = 0;
         }
         System.out.println("RRR Refresh " + nameX + " " + onlineX);
     }
