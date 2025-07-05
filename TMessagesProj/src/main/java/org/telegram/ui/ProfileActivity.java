@@ -7629,22 +7629,22 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     starFgItem.setTranslationX(avatarContainer.getX() + AndroidUtilities.dp(28) + extra);
                     starFgItem.setTranslationY(avatarContainer.getY() + AndroidUtilities.dp(24) + extra);
                 }
-//                refreshNameAndOnlineXY();
-                nameX = AndroidUtilities.density * diff;
+                refreshNameAndOnlineXY();
+//                nameX = AndroidUtilities.density * diff;
 //                nameY = (float) Math.floor(avatarY) + AndroidUtilities.dp(1.3f) + AndroidUtilities.dp(7) * diff + titleAnimationsYDiff * (1f - avatarAnimationProgress);
-                onlineX = AndroidUtilities.density * diff;
+//                onlineX = AndroidUtilities.density * diff;
 //                onlineY = (float) Math.floor(avatarY) + AndroidUtilities.dp(24) + (float) Math.floor(11 * AndroidUtilities.density) * diff;
-                float newNameY = (float) Math.floor(avatarY) + (AndroidUtilities.dp(16f) + (avatarContainer.getMeasuredHeight()) * avatarScale);
-                float minNameY = AndroidUtilities.dp(12) + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
-                if (newNameY > minNameY) {
-                    nameY = newNameY;
-                } else  {
-                    nameY = minNameY;
-                }
+//                float newNameY = (float) Math.floor(avatarY) + (AndroidUtilities.dp(16f) + (avatarContainer.getMeasuredHeight()) * avatarScale);
+//                float minNameY = AndroidUtilities.dp(12) + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
+//                if (newNameY > minNameY) {
+//                    nameY = newNameY;
+//                } else  {
+//                    nameY = minNameY;
+//                }
 
                 System.out.println("NAME YYY2 " + nameY);
 
-                onlineY = nameY + AndroidUtilities.dp(24);
+//                onlineY = nameY + AndroidUtilities.dp(24);
                 refreshButtonsContainer();
                 if (isStartCollapsing()) {
                     System.out.println("XXXS " + nameX);
@@ -7772,10 +7772,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
     private void refreshNameAndOnlineXY() {
         float newNameY = (float) Math.floor(avatarY) + (AndroidUtilities.dp(16f) + (avatarContainer.getMeasuredHeight()) * avatarScale);
-        if (newNameY > AndroidUtilities.dp(14)) {
+        float minNameY = AndroidUtilities.dp(12) + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
+        if (newNameY > minNameY) {
             nameY = newNameY;
         } else  {
-            nameY = AndroidUtilities.dp(14);
+            nameY = minNameY;
         }
         System.out.println("NAME YYY" + nameY);
         onlineY = nameY + AndroidUtilities.dp(24);
@@ -7790,8 +7791,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 //            System.out.println("wewew " + onlineTextView[0].getMeasuredWidth() + " " + layoutParams.width );
 //            onlineX = -1 * avatarContainer2.getMeasuredWidth()/2f;
 //            onlineX = -120;
+            // nameX = 200;
         } else {
-            nameX = 0;
+            // pulling down
+            nameX = AndroidUtilities.dp(48);
             onlineX = 0;
         }
         System.out.println("RRR Refresh " + nameX + " " + onlineX);
@@ -7851,39 +7854,40 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         int buttonsWidth = AndroidUtilities.dp(118 + 8 + (40 + extra * (1.0f - mediaHeaderAnimationProgress)));
         int minWidth = viewWidth - buttonsWidth;
 
-        int width = (int) (viewWidth - buttonsWidth * Math.max(0.0f, 1.0f - (diff != 1.0f ? diff * 0.15f / (1.0f - diff) : 1.0f)) - nameTextView[1].getTranslationX());
-        float width2 = nameTextView[1].getPaint().measureText(nameTextView[1].getText().toString()) * scale + nameTextView[1].getSideDrawablesSize();
-        layoutParams = (FrameLayout.LayoutParams) nameTextView[1].getLayoutParams();
-        int prevWidth = layoutParams.width;
-        if (width < width2) {
-            layoutParams.width = Math.max(minWidth, (int) Math.ceil((width - AndroidUtilities.dp(24)) / (scale + ((maxScale - scale) * 7.0f))));
-        } else {
-            layoutParams.width = (int) Math.ceil(width2);
-        }
-        layoutParams.width = (int) Math.min((viewWidth - nameTextView[1].getX()) / scale - AndroidUtilities.dp(8), layoutParams.width);
-        if (layoutParams.width != prevWidth) {
-            nameTextView[1].requestLayout();
-        }
+//        int width = (int) (viewWidth - buttonsWidth * Math.max(0.0f, 1.0f - (diff != 1.0f ? diff * 0.15f / (1.0f - diff) : 1.0f)) - nameTextView[1].getTranslationX());
+//        float width2 = nameTextView[1].getPaint().measureText(nameTextView[1].getText().toString()) * scale + nameTextView[1].getSideDrawablesSize();
+//        layoutParams = (FrameLayout.LayoutParams) nameTextView[1].getLayoutParams();
+//        int prevWidth = layoutParams.width;
+//        if (width < width2) {
+//            layoutParams.width = Math.max(minWidth, (int) Math.ceil((width - AndroidUtilities.dp(24)) / (scale + ((maxScale - scale) * 7.0f))));
+//        } else {
+//            layoutParams.width = (int) Math.ceil(width2);
+//        }
+//        layoutParams.width = (int) Math.min((viewWidth - nameTextView[1].getX()) / scale - AndroidUtilities.dp(8), layoutParams.width);
+//        if (layoutParams.width != prevWidth) {
+//            nameTextView[1].requestLayout();
+//        }
 
-        width2 = onlineTextView[1].getPaint().measureText(onlineTextView[1].getText().toString()) + onlineTextView[1].getRightDrawableWidth();
+//        width2 = onlineTextView[1].getPaint().measureText(onlineTextView[1].getText().toString()) + onlineTextView[1].getRightDrawableWidth();
 
-        layoutParams = (FrameLayout.LayoutParams) onlineTextView[1].getLayoutParams();
-        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) mediaCounterTextView.getLayoutParams();
-        prevWidth = layoutParams.width;
-        layoutParams2.rightMargin = layoutParams.rightMargin = (int) Math.ceil(onlineTextView[1].getTranslationX() + AndroidUtilities.dp(8) + AndroidUtilities.dp(40) * (1.0f - diff));
-        if (width < width2) {
-            layoutParams2.width = layoutParams.width = (int) Math.ceil(width);
-        } else {
-            layoutParams2.width = layoutParams.width = LayoutHelper.WRAP_CONTENT;
-        }
-        if (prevWidth != layoutParams.width) {
-            onlineTextView[2].getLayoutParams().width = layoutParams.width;
-            onlineTextView[2].requestLayout();
-            onlineTextView[3].getLayoutParams().width = layoutParams.width;
-            onlineTextView[3].requestLayout();
-            onlineTextView[1].requestLayout();
-            mediaCounterTextView.requestLayout();
-        }
+//        layoutParams = (FrameLayout.LayoutParams) onlineTextView[1].getLayoutParams();
+//        FrameLayout.LayoutParams layoutParams2 = (FrameLayout.LayoutParams) mediaCounterTextView.getLayoutParams();
+//        prevWidth = layoutParams.width;
+//        layoutParams2.rightMargin = layoutParams.rightMargin = (int) Math.ceil(onlineTextView[1].getTranslationX() + AndroidUtilities.dp(8) + AndroidUtilities.dp(40) * (1.0f - diff));
+//        if (width < width2) {
+//            layoutParams2.width = layoutParams.width = (int) Math.ceil(width);
+//        } else {
+//            layoutParams2.width = layoutParams.width = LayoutHelper.WRAP_CONTENT;
+//        }
+//        System.out.println("WWWWW " + layoutParams.width + " " + width + " " + prevWidth + " ");
+//        if (prevWidth != layoutParams.width) {
+//            onlineTextView[2].getLayoutParams().width = layoutParams.width;
+//            onlineTextView[2].requestLayout();
+//            onlineTextView[3].getLayoutParams().width = layoutParams.width;
+//            onlineTextView[3].requestLayout();
+//            onlineTextView[1].requestLayout();
+//            mediaCounterTextView.requestLayout();
+//        }
     }
 
     private void fixLayout() {
