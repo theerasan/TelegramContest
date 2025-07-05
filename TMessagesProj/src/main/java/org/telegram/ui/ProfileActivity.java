@@ -8,8 +8,10 @@
 
 package org.telegram.ui;
 
+import static android.view.View.TEXT_ALIGNMENT_CENTER;
 import static androidx.core.view.ViewCompat.TYPE_TOUCH;
 import static org.telegram.messenger.AndroidUtilities.dp;
+import static org.telegram.messenger.AndroidUtilities.dp2;
 import static org.telegram.messenger.AndroidUtilities.lerp;
 import static org.telegram.messenger.ContactsController.PRIVACY_RULES_TYPE_ADDED_BY_PHONE;
 import static org.telegram.messenger.LocaleController.formatPluralString;
@@ -37,7 +39,9 @@ import android.content.SharedPreferences;
 import android.content.pm.ConfigurationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -95,6 +99,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.webkit.CookieManager;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -1004,6 +1009,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private static float secoundStepHeight = 192f;
     private static float avatarSize = 62f;
     private static float buttonsHeight = 24f;
+    private static HashSet<Integer> menuSet = new HashSet<Integer>();
 
     private LinearLayout buttonsContainer;
 
@@ -3642,6 +3648,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             scrollTo = -1;
         }
 
+        buttonsContainer = new LinearLayout(context);
+        buttonsContainer.setOrientation(LinearLayout.HORIZONTAL);
+
         createActionBarMenu(false);
 
         listAdapter = new ListAdapter(context);
@@ -3659,11 +3668,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         topView.setBackgroundColor(getThemedColor(Theme.key_avatar_backgroundActionBarBlue));
         frameLayout.addView(topView);
 
-        buttonsContainer = new LinearLayout(context);
-        buttonsContainer.setBackgroundColor(R.color.common_google_signin_btn_text_dark_default);
+//        buttonsContainer.setBackgroundColor(R.color.common_google_signin_btn_text_dark_default);
         buttonsContainer.setPivotY(0);
         buttonsContainer.setPivotX(frameLayout.getMeasuredWidth() / 2f);
-        frameLayout.addView(buttonsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.dp(buttonsHeight), Gravity.TOP | Gravity.CENTER));
+
 
         listView = new ClippedListView(context) {
 
@@ -5259,6 +5267,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         avatarContainer2.addView(giftsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         avatarContainer2.addView(avatarContainer, LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
         avatarContainer.setAlpha(0.2f);
+        frameLayout.addView(buttonsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.dp(buttonsHeight), Gravity.TOP | Gravity.START, 12, 0, 10, 0));
         updateProfileData(true);
 
         writeButton = new RLottieImageView(context);
@@ -10571,17 +10580,22 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 return;
             }
             if (UserObject.isUserSelf(user)) {
-                editItemVisible = myProfile;
+                editItemVisible = false;
                 otherItem.addSubItem(edit_info, R.drawable.msg_edit, LocaleController.getString(R.string.EditInfo));
+                addProfilesMenu(edit_info, R.drawable.msg_edit);
                 if (imageUpdater != null) {
                     otherItem.addSubItem(add_photo, R.drawable.msg_addphoto, LocaleController.getString(R.string.AddPhoto));
+                    addProfilesMenu(add_photo, R.drawable.msg_addphoto);
                 }
                 editColorItem = otherItem.addSubItem(edit_color, R.drawable.menu_profile_colors, LocaleController.getString(R.string.ProfileColorEdit));
+                addProfilesMenu(add_photo, R.drawable.menu_profile_colors);
                 updateEditColorIcon();
                 if (myProfile) {
                     setUsernameItem = otherItem.addSubItem(set_username, R.drawable.menu_username_change, getString(R.string.ProfileUsernameEdit));
                     linkItem = otherItem.addSubItem(copy_link_profile, R.drawable.msg_link2, getString(R.string.ProfileCopyLink));
                     updateItemsUsername();
+                    addProfilesMenu(set_username, R.drawable.menu_username_change);
+                    addProfilesMenu(copy_link_profile, R.drawable.msg_link2);
                 }
                 selfUser = true;
             } else {
@@ -10821,6 +10835,60 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             sharedMediaLayout.getSearchItem().requestLayout();
         }
         updateStoriesViewBounds(false);
+    }
+
+    private void addProfilesMenu(int id, int drawable) {
+        if (buttonsContainer.getChildCount() == 0) {
+            menuSet.clear();
+        }
+        if (menuSet.size() < 4 && menuSet.add(id)) {
+            View view = otherItem.getSubItem(id);
+            Context context = view.getContext();
+            if (view instanceof ActionBarMenuSubItem) {
+                LinearLayout l = new LinearLayout(context);
+                l.setOrientation(LinearLayout.VERTICAL);
+                AnimatedEmojiSpan.TextViewEmojis e = ((ActionBarMenuSubItem) view).textView;
+                TextView tv = new TextView(context);
+                tv.setText(e.getText());
+                tv.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+                tv.setGravity(Gravity.CENTER);
+
+                Drawable d = context.getResources().getDrawable(drawable);
+                d.setBounds(0, 0, dp(24), dp(24));
+                tv.setCompoundDrawables(null, d, null, null);
+                int[][] states = new int[][] {
+                        new int[] { android.R.attr.state_enabled}, // enabled
+                        new int[] {-android.R.attr.state_enabled}, // disabled
+                        new int[] {-android.R.attr.state_checked}, // unchecked
+                        new int[] { android.R.attr.state_pressed}  // pressed
+                };
+
+                int[] colors = new int[] {
+                        getThemedColor(Theme.key_profile_title),
+                        getThemedColor(Theme.key_profile_title),
+                        getThemedColor(Theme.key_profile_title),
+                        getThemedColor(Theme.key_profile_title)
+                };
+                tv.setCompoundDrawableTintList(new ColorStateList(states, colors));
+                tv.setTextColor(new ColorStateList(states, colors));
+                tv.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+                int[] attrs = new int[]{R.attr.selectableItemBackground};
+                TypedArray typedArray = context.obtainStyledAttributes(attrs);
+                int backgroundResource = typedArray.getResourceId(0, 0);
+                tv.setBackgroundResource(backgroundResource);
+                l.setGravity(Gravity.CENTER);
+                tv.setOnClickListener(v -> {
+                    view.callOnClick();
+                });
+                tv.setPadding(dp(4), dp(6), dp(4), dp(6));
+                l.addView(tv, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(buttonsHeight), dp(0), dp(0), dp(0), dp(0)));
+                LinearLayout.LayoutParams lp = LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(buttonsHeight), 0, 0, 6, 0);
+                lp.weight = 1;
+                l.setBackground(context.getResources().getDrawable(R.drawable.profile_button_background));
+                l.setClipToOutline(true);
+                buttonsContainer.addView(l, lp);
+            }
+        }
     }
 
     private void createAutoDeleteItem(Context context) {
