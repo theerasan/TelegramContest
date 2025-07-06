@@ -17,6 +17,7 @@ import static org.telegram.messenger.LocaleController.formatPluralString;
 import static org.telegram.messenger.LocaleController.formatString;
 import static org.telegram.messenger.LocaleController.getString;
 import static org.telegram.ui.Stars.StarsIntroActivity.formatStarsAmountShort;
+import static org.telegram.ui.Stars.StarsIntroActivity.showSoldOutGiftSheet;
 import static org.telegram.ui.bots.AffiliateProgramFragment.percents;
 
 import android.Manifest;
@@ -40,7 +41,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.graphics.Bitmap;
@@ -109,7 +109,6 @@ import android.widget.Toast;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.view.menu.ActionMenuItem;
 import androidx.collection.LongSparseArray;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -127,6 +126,8 @@ import androidx.recyclerview.widget.LinearSmoothScrollerCustom;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+
+import com.google.android.exoplayer2.text.SubtitleOutputBuffer;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AccountInstance;
@@ -5328,7 +5329,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         giftsView = new ProfileGiftsView(context, currentAccount, getDialogId(), avatarContainer, avatarImage, resourcesProvider);
         avatarContainer2.addView(giftsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         avatarContainer2.addView(avatarContainer, LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
-        avatarContainer.setAlpha(0.2f);
         frameLayout.addView(buttonsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.dp(buttonsHeight), Gravity.TOP | Gravity.START, 12, 0, 10, 0));
         updateProfileData(true);
 
@@ -5781,7 +5781,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         if (extraHeight > AndroidUtilities.dp(secoundTopbarStepHeight) && expandProgress < 0.33f) {
             refreshNameAndOnlineXY();
             refreshButtonsContainer();
-            refreshAvatarXY();
+            refreshAvatar();
         }
 
         if (scamDrawable != null) {
@@ -7516,7 +7516,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         onlineTextView[1].setTranslationY(newTop + h - AndroidUtilities.dpf2(18f) - onlineTextView[1].getBottom() + additionalTranslationY);
                         mediaCounterTextView.setTranslationX(onlineTextView[1].getTranslationX());
                         mediaCounterTextView.setTranslationY(onlineTextView[1].getTranslationY());
-                        refreshAvatarXY();
+                        refreshAvatar();
                         updateCollectibleHint();
                     }
                 } else {
@@ -7581,7 +7581,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     if (expandAnimator == null || !expandAnimator.isRunning()) {
                         refreshNameAndOnlineXY();
                         refreshButtonsContainer();
-                        refreshAvatarXY();
+                        refreshAvatar();
                         float x = (avatarContainer2.getMeasuredWidth() - (nameTextView[1].getMeasuredWidth() * nameTextView[1].getScaleY())) /2;
 
                         float d = getCollapsingProgress();
@@ -7599,7 +7599,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
             } else {
                 float step = extraHeight/AndroidUtilities.dp(secoundTopbarStepHeight);
-                avatarY = AndroidUtilities.lerp(-((avatarContainer.getMeasuredHeight() * avatarScale)), avatarY , step);
+                avatarY = AndroidUtilities.lerp(-((avatarContainer.getMeasuredHeight() * avatarScale) + dp(18)), avatarY , step);
             }
 
             if (openAnimationInProgress && playProfileAnimation == 2) {
@@ -7664,7 +7664,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
                 updateCollectibleHint();
             } else if (extraHeight <= AndroidUtilities.dp(secoundTopbarStepHeight)) {
-                avatarScale = (avatarSize + 18 * diff) / avatarSize;
+                avatarScale = ((avatarSize + 18) * ((float) Math.pow(diff, 0.7))) / avatarSize;
+                avatarImage.setAlpha(AndroidUtilities.lerp(1f, 0.2f, 1-diff));
+
                 if (storyView != null) {
                     storyView.invalidate();
                 }
@@ -7715,8 +7717,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     }
                     if (expandAnimator == null || !expandAnimator.isRunning()) {
                         float x = (avatarContainer2.getMeasuredWidth() - (nameTextView[a].getMeasuredWidth() * nameScale)) /2;
-
-
 
                         float d = getCollapsingProgress();
                         float f =  1 - (4 * d * d) ;
@@ -7897,7 +7897,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         return 1 - (extraHeight / AndroidUtilities.dp(secoundTopbarStepHeight - (avatarScale*avatarSize) ));
     }
 
-    private void refreshAvatarXY() {
+    private void refreshAvatar() {
         avatarX = (avatarContainer2.getMeasuredWidth() / 2f) - ((AndroidUtilities.dp(avatarSize) * avatarScale)/ 2f) ;
         avatarContainer.setTranslationX(avatarX);
     }
