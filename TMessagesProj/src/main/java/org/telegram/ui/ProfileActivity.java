@@ -7677,11 +7677,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     if (expandAnimator == null || !expandAnimator.isRunning()) {
                         float d = Math.abs(getCollapsingProgress());
                         float nameCurrentX = ((avatarContainer2.getMeasuredWidth()/2f - (nameTextView[a].getTextWidth() * nameScale)/2)) - (nameTextView[a].getPaddingLeft() * nameScale );
-                        float nameNewX = AndroidUtilities.lerp(nameCurrentX, AndroidUtilities.dp(56), d);
+                        float nameNewX = AndroidUtilities.lerp(nameCurrentX, AndroidUtilities.dp(62), d);
 
                         float onlineScale = onlineTextView[a].getScaleX();
                         float onlineCurrentX = ((avatarContainer2.getMeasuredWidth()/2f - (onlineTextView[a].getTextWidth() * onlineScale)/2)) - (onlineTextView[a].getPaddingLeft() * onlineScale );
-                        float onlineNewX = AndroidUtilities.lerp(onlineCurrentX, AndroidUtilities.dp(56), d);
+                        float onlineNewX = AndroidUtilities.lerp(onlineCurrentX, AndroidUtilities.dp(62), d);
 
                         if (isStartCollapsing()) {
                             nameTextView[a].setTranslationX(nameNewX);
