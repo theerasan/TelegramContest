@@ -7581,7 +7581,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 float avX = 0;
                 float avY = (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + ActionBar.getCurrentActionBarHeight() / 2.0f - 21 * AndroidUtilities.density + actionBar.getTranslationY();
 
-                System.out.println("SET here 1");
                 nameTextView[0].setTranslationX(120);
                 nameTextView[0].setTranslationY((float) Math.floor(avY) + AndroidUtilities.dp(1.3f));
                 onlineTextView[0].setTranslationX(0);
@@ -8672,7 +8671,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     onlineTextView[i + 1].setLayoutParams(layoutParams);
                 }
 
-
                 if (playProfileAnimation != 2) {
                     int width = (int) Math.ceil(AndroidUtilities.displaySize.x - AndroidUtilities.dp(118 + 8) + 21 * AndroidUtilities.density);
                     float width2 = nameTextView[1].getPaint().measureText(nameTextView[1].getText().toString()) * 1.12f + nameTextView[1].getSideDrawablesSize();
@@ -8689,6 +8687,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) nameTextView[1].getLayoutParams();
                     layoutParams.width = (int) ((AndroidUtilities.displaySize.x - AndroidUtilities.dp(32)) / 1.67f);
                     nameTextView[1].setLayoutParams(layoutParams);
+                    nameTextView[1].setTranslationX(dp(18));
+                    onlineTextView[1].setTranslationX(dp(16));
                 }
                 fragmentView.setBackgroundColor(0);
                 setAvatarAnimationProgress(0);
@@ -8929,6 +8929,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
             AndroidUtilities.runOnUIThread(animatorSet::start, 50);
             return animatorSet;
+        } else {
+            nameTextView[1].setTranslationX(dp(18));
+            onlineTextView[1].setTranslationX(dp(16));
         }
         return null;
     }
