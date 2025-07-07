@@ -5220,7 +5220,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             nameTextView[a].setGravity(Gravity.LEFT);
 
             // Check text here
-            avatarContainer2.addView(nameTextView[a], LayoutHelper.createFrame(a == 0 ? initialTitleWidth : LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 48, -6, 48, 0));
+            avatarContainer2.addView(nameTextView[a], LayoutHelper.createFrame(a == 0 ? initialTitleWidth : LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, -6, 0, 0));
         }
         for (int a = 0; a < onlineTextView.length; a++) {
             if (a == 1) {
@@ -7024,17 +7024,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         ImageView mediaOptionsItem = sharedMediaLayout.getSearchOptionsItem();
         TextView saveItem = sharedMediaLayout.getSaveItem();
         if (!mediaHeaderVisible) {
-            if (callItemVisible) {
-                callItem.setVisibility(View.VISIBLE);
-            }
-            if (videoCallItemVisible) {
-                videoCallItem.setVisibility(View.VISIBLE);
-            }
             if (editItemVisible) {
                 ActionBarMenuItem a = actionBar.menu.getItem(edit_channel);
-                System.out.println("EEE 1.2 " + a.getVisibility() + " " + View.GONE + " " + View.VISIBLE);
                 editItem.setVisibility(View.VISIBLE);
-                System.out.println("EEE 1.5 " + editItem.getVisibility() + " " + View.GONE + " " + View.VISIBLE);
             }
             otherItem.setVisibility(View.VISIBLE);
             if (mediaOptionsItem != null) {
@@ -7716,16 +7708,17 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         continue;
                     }
                     if (expandAnimator == null || !expandAnimator.isRunning()) {
-                        float x = (avatarContainer2.getMeasuredWidth() - (nameTextView[a].getMeasuredWidth() * nameScale)) /2;
+                        float x = ((avatarContainer2.getMeasuredWidth()/2f - (nameTextView[a].getTextWidth() * nameScale)/2)) - (nameTextView[a].getPaddingLeft() * nameScale );
 
                         float d = getCollapsingProgress();
-                        float f =  1 - (4 * d * d) ;
-                        float newX = AndroidUtilities.lerp(x, 0, d);
+                        float newX = AndroidUtilities.lerp(x, AndroidUtilities.dp(48), d);
 
-                        System.out.println("CCCC " + newX + " " + nameTextView[a].getMaxTextWidth() + " " + x + " " + (avatarContainer2.getMeasuredWidth()));
+                        System.out.println("XXXX " + isStartCollapsing() + " " + x + " " + newX + " " + d + " " + nameTextView[a].getTextWidth() + " " + avatarContainer2.getMeasuredWidth());
 
                         if (isStartCollapsing()) {
                             nameTextView[a].setTranslationX(newX);
+                        } else {
+                            nameTextView[a].setTranslationX(x);
                         }
 
                         nameTextView[a].setTranslationY(nameY);
@@ -14249,8 +14242,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     onlineTextView[2].setAlpha(currentExpandAnimatorValue);
                     onlineTextView[3].setAlpha(1f - currentExpandAnimatorValue);
                     //  onlineTextView[1].setAlpha(1f - expandProgress);
-                    System.out.println("xxxx xxx");
-                    onlineTextView[1].setTranslationX(onlineX + customPhotoOffset);
+//                    System.out.println("xxxx xxx");
+//                    onlineTextView[1].setTranslationX(onlineX + customPhotoOffset);
                     avatarContainer2.invalidate();
                     if (showStatusButton != null) {
                         showStatusButton.setAlpha2(1f - currentExpandAnimatorValue);
