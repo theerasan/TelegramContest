@@ -5166,6 +5166,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             }
         }
 
+        avatarContainer2.addView(avatarContainer, LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
+
         for (int a = 0; a < nameTextView.length; a++) {
             if (playProfileAnimation == 0 && a == 0) {
                 continue;
@@ -5217,7 +5219,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             nameTextView[a].setFocusable(a == 0);
             nameTextView[a].setEllipsizeByGradient(true);
             nameTextView[a].setRightDrawableOutside(a == 0);
-            nameTextView[a].setGravity(Gravity.LEFT);
 
             // Check text here
             avatarContainer2.addView(nameTextView[a], LayoutHelper.createFrame(a == 0 ? initialTitleWidth : LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, -6, 0, 0));
@@ -5328,7 +5329,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         avatarContainer2.addView(storyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         giftsView = new ProfileGiftsView(context, currentAccount, getDialogId(), avatarContainer, avatarImage, resourcesProvider);
         avatarContainer2.addView(giftsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        avatarContainer2.addView(avatarContainer, LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
         frameLayout.addView(buttonsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.dp(buttonsHeight), Gravity.TOP | Gravity.START, 12, 0, 10, 0));
         updateProfileData(true);
 
@@ -5824,7 +5824,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         final float onlineTextViewX = (1 - value) * (1 - value) * onlineX + 2 * (1 - value) * value * onlineTextViewCx + value * value * onlineTextViewXEnd;
         final float onlineTextViewY = (1 - value) * (1 - value) * onlineY + 2 * (1 - value) * value * onlineTextViewCy + value * value * onlineTextViewYEnd;
 
-        nameTextView[1].setTranslationX(nameTextViewX);
+        System.out.println("SET here 2 " + animatedFracture + " " + value);
+//        nameTextView[1].setTranslationX(nameTextViewX);
+
+        float nameScale = nameTextView[1].getScaleY();
+        float x = ((avatarContainer2.getMeasuredWidth()/2f - (nameTextView[1].getTextWidth() * nameScale)/2)) - (nameTextView[1].getPaddingLeft() * nameScale );
+
+        float newX = AndroidUtilities.lerp(x, AndroidUtilities.dp(18), value);
+
+        nameTextView[1].setTranslationX(newX);
         nameTextView[1].setTranslationY(nameTextViewY);
         onlineTextView[1].setTranslationX(onlineTextViewX + customPhotoOffset);
         onlineTextView[1].setTranslationY(onlineTextViewY);
@@ -7502,7 +7510,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             additionalTranslationY = -(1.0f - avatarAnimationProgress) * AndroidUtilities.dp(50);
                         }
                         onlineX = AndroidUtilities.dpf2(16f) - onlineTextView[1].getLeft();
-                        nameTextView[1].setTranslationX(AndroidUtilities.dpf2(18f) - nameTextView[1].getLeft());
+//                        nameTextView[1].setTranslationX(AndroidUtilities.dpf2(18f) - nameTextView[1].getLeft());
                         nameTextView[1].setTranslationY(newTop + h - AndroidUtilities.dpf2(38f) - nameTextView[1].getBottom() + additionalTranslationY);
                         onlineTextView[1].setTranslationX(onlineX + customPhotoOffset);
                         onlineTextView[1].setTranslationY(newTop + h - AndroidUtilities.dpf2(18f) - onlineTextView[1].getBottom() + additionalTranslationY);
@@ -7576,11 +7584,28 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         refreshAvatar();
                         float x = (avatarContainer2.getMeasuredWidth() - (nameTextView[1].getMeasuredWidth() * nameTextView[1].getScaleY())) /2;
 
-                        float d = getCollapsingProgress();
-                        float f =  1 - (4 * d * d) ;
-                        System.out.println("DDDD " + (-d));
-                        float newX = AndroidUtilities.lerp(x, 0, -d/2);
-                        nameTextView[1].setTranslationX(newX);
+
+                        float value = AndroidUtilities.lerp(expandAnimatorValues, currentExpanAnimatorFracture);
+
+
+//                        float newX = AndroidUtilities.lerp(x, 0, -d/2);
+//                        nameTextView[1].setTranslationX(0);
+                        System.out.println("SET here 3");
+                        System.out.println("DDDD 1 " + nameTextView[1].getX());
+                        System.out.println("DDDD 2 " + topView.getMeasuredHeight());
+                        System.out.println("DDDD 3 " + actionBar.getHeight());
+                        System.out.println("DDDD 4 " + AndroidUtilities.statusBarHeight);
+                        System.out.println("DDDD 4 " + AndroidUtilities.statusBarHeight);
+                        System.out.println("DDDD 6 " + topView.getX());
+
+
+
+                        final int actionBarHeight = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
+                        float progress = (extraHeight - AndroidUtilities.dp(secoundTopbarStepHeight) - AndroidUtilities.statusBarHeight) / actionBarHeight;
+
+                        System.out.println("DDDP " + expandProgress + " " + (nameY - extraHeight) + " " + (nameY - AndroidUtilities.dp(secoundTopbarStepHeight)));
+                        float newX = AndroidUtilities.lerp(nameTextView[1].getX(), AndroidUtilities.dp(16), expandProgress*3);
+                        System.out.println("DDDP2 " + expandProgress*3 + " " + newX);
                         nameTextView[1].setTranslationY(nameY);
                         onlineTextView[1].setTranslationX(onlineX + customPhotoOffset);
                         onlineTextView[1].setTranslationY(onlineY);
@@ -7598,7 +7623,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 float avX = 0;
                 float avY = (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + ActionBar.getCurrentActionBarHeight() / 2.0f - 21 * AndroidUtilities.density + actionBar.getTranslationY();
 
-                nameTextView[0].setTranslationX(0);
+                System.out.println("SET here 1");
+                nameTextView[0].setTranslationX(120);
                 nameTextView[0].setTranslationY((float) Math.floor(avY) + AndroidUtilities.dp(1.3f));
                 onlineTextView[0].setTranslationX(0);
                 onlineTextView[0].setTranslationY((float) Math.floor(avY) + AndroidUtilities.dp(24));
@@ -7710,11 +7736,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     if (expandAnimator == null || !expandAnimator.isRunning()) {
                         float x = ((avatarContainer2.getMeasuredWidth()/2f - (nameTextView[a].getTextWidth() * nameScale)/2)) - (nameTextView[a].getPaddingLeft() * nameScale );
 
-                        float d = getCollapsingProgress();
-                        float newX = AndroidUtilities.lerp(x, AndroidUtilities.dp(48), d);
-
-                        System.out.println("XXXX " + isStartCollapsing() + " " + x + " " + newX + " " + d + " " + nameTextView[a].getTextWidth() + " " + avatarContainer2.getMeasuredWidth());
-
+                        float d = Math.abs(getCollapsingProgress());
+                        float newX = AndroidUtilities.lerp(x, AndroidUtilities.dp(56), d);
                         if (isStartCollapsing()) {
                             nameTextView[a].setTranslationX(newX);
                         } else {
@@ -7849,10 +7872,17 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             // nameX = 200;
         } else {
             // pulling down
-            nameX = AndroidUtilities.dp(48);
-            onlineX = 0;
+//            nameX = AndroidUtilities.dp(48);
+//            onlineX = 0;
         }
-        System.out.println("RRR Refresh " + nameX + " " + onlineX);
+        if (nameTextView[1] != null) {
+            float nameScale = nameTextView[1].getScaleX();
+            float x = ((avatarContainer2.getMeasuredWidth()/2f)) ;
+            System.out.println("RRR22 = " + nameTextView[1].getPaddingLeft() + " " + nameTextView[1].getPaddingRight());
+
+//            nameTextView[1].setTranslationX(-(x));
+        }
+        System.out.println("RRR Refresh " + nameX + " " + onlineX + " " + avatarScale + " " + expandProgress);
     }
 
     private void refreshButtonsContainer() {
@@ -7900,7 +7930,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     }
 
     private void needLayoutText(float diff) {
-        FrameLayout.LayoutParams layoutParams;
         float scale = nameTextView[1].getScaleX();
         float maxScale = extraHeight > AndroidUtilities.dp(secoundTopbarStepHeight) ? 1.67f : 1.12f;
 
