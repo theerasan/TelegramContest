@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+<item>
+    <inset
+        android:insetRight="1dp"
+        android:insetLeft="1dp"
+        android:insetTop="1dp"
+        android:insetBottom="1dp"
+        android:drawable="@drawable/avatar_blur_radius">
+    </inset>
+</item>
+</layer-list>
