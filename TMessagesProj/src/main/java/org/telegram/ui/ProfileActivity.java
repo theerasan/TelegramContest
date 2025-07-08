@@ -366,7 +366,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private FrameLayout avatarContainer;
     private FrameLayout avatarContainer2;
     private ImageView avatarBlurImage;
-    private FrameLayout avatarBlurContainer;
     private DrawerProfileCell.AnimatedStatusView animatedStatusView;
     private AvatarImageView avatarImage;
     private View avatarOverlay;
@@ -4948,8 +4947,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         avatarContainer = new FrameLayout(context);
         avatarBlurImage = new ImageView(context);
-        avatarBlurContainer = new FrameLayout(context);
-        avatarBlurContainer.setBackground(ContextCompat.getDrawable(context, R.drawable.avatar_blur_background));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             avatarBlurImage.setOutlineProvider(new ViewOutlineProvider() {
@@ -5049,7 +5046,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         frameLayout.addView(avatarContainer2, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.START, 0, 0, 0, 0));
         avatarContainer.setPivotY(0);
         avatarBlurImage.setPivotY(0);
-        avatarBlurContainer.setPivotY(0);
 
         avatarImage = new AvatarImageView(context) {
             @Override
@@ -5370,8 +5366,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         }
         giftsView = new ProfileGiftsView(context, currentAccount, getDialogId(), avatarContainer, avatarImage, resourcesProvider);
         avatarContainer2.addView(giftsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-//        avatarContainer2.addView(avatarBlurContainer, LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
-//        avatarContainer.setBackground(ContextCompat.getDrawable(context, R.drawable.avatar_blur_background));
         avatarContainer2.addView(avatarContainer, LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
         avatarContainer2.addView(avatarBlurImage, LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
         avatarContainer2.addView(storyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
@@ -5809,10 +5803,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         avatarBlurImage.setScaleY(avatarScale);
         avatarBlurImage.setTranslationX(AndroidUtilities.lerp((float) avatarX, 0f, value));
         avatarBlurImage.setTranslationY(AndroidUtilities.lerp((float) Math.ceil(avatarY), 0f, value));
-        avatarBlurContainer.setScaleX(avatarScale);
-        avatarBlurContainer.setScaleY(avatarScale);
-        avatarBlurContainer.setTranslationX(AndroidUtilities.lerp((float) avatarX, 0f, value));
-        avatarBlurContainer.setTranslationY(AndroidUtilities.lerp((float) Math.ceil(avatarY), 0f, value));
 
         avatarImage.setRoundRadius((int) AndroidUtilities.lerp(getSmallAvatarRoundRadius(), 0f, value));
         if (storyView != null) {
@@ -7545,7 +7535,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                 topView.setBackgroundColor(Color.BLACK);
                                 avatarContainer.setVisibility(View.GONE);
                                 avatarBlurImage.setVisibility(View.GONE);
-                                avatarBlurContainer.setVisibility(View.GONE);
                                 buttonsContainer.setVisibility(View.GONE);
                                 avatarsViewPager.setVisibility(View.VISIBLE);
                             }
@@ -7620,7 +7609,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         avatarImage.setForegroundAlpha(1f);
                         avatarContainer.setVisibility(View.VISIBLE);
                         avatarBlurImage.setVisibility(View.VISIBLE);
-                        avatarBlurContainer.setVisibility(View.VISIBLE);
                         buttonsContainer.setScaleY(0f);
                         buttonsContainer.setAlpha(0f);
                         buttonsContainer.setVisibility(View.VISIBLE);
@@ -7632,8 +7620,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     avatarContainer.setScaleY(avatarScale);
                     avatarBlurImage.setScaleX(avatarScale);
                     avatarBlurImage.setScaleY(avatarScale);
-                    avatarBlurContainer.setScaleX(avatarScale);
-                    avatarBlurContainer.setScaleY(avatarScale);
 
                     if (expandAnimator == null || !expandAnimator.isRunning()) {
                         refreshNameAndOnlineXY();
@@ -7679,9 +7665,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 avatarBlurImage.setTranslationX(avatarX);
                 avatarBlurImage.setTranslationY(AndroidUtilities.lerp((float) Math.ceil(avY), 0f, avatarAnimationProgress));
 
-                avatarBlurContainer.setTranslationX(avatarX);
-                avatarBlurContainer.setTranslationY(AndroidUtilities.lerp((float) Math.ceil(avY), 0f, avatarAnimationProgress));
-
                 float extra = (avatarContainer.getMeasuredWidth() - AndroidUtilities.dp(avatarSize)) * avatarScale;
                 timeItem.setTranslationX(avatarContainer.getX() + AndroidUtilities.dp(16) + extra);
                 timeItem.setTranslationY(avatarContainer.getY() + AndroidUtilities.dp(15) + extra);
@@ -7695,9 +7678,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
                 avatarBlurImage.setScaleX(avatarScale);
                 avatarBlurImage.setScaleY(avatarScale);
-
-                avatarBlurContainer.setScaleX(avatarScale);
-                avatarBlurContainer.setScaleY(avatarScale);
 
                 overlaysView.setAlphaValue(avatarAnimationProgress, false);
                 actionBar.setItemsColor(ColorUtils.blendARGB(peerColor != null ? Color.WHITE : getThemedColor(Theme.key_actionBarDefaultIcon), Color.WHITE, avatarAnimationProgress), false);
@@ -7745,11 +7725,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     avatarBlurImage.setScaleY(avatarScale);
                     avatarBlurImage.setTranslationX(avatarX);
                     avatarBlurImage.setTranslationY((float) Math.ceil(avatarY));
-
-                    avatarBlurContainer.setScaleX(avatarScale);
-                    avatarBlurContainer.setScaleY(avatarScale);
-                    avatarBlurContainer.setTranslationX(avatarX);
-                    avatarBlurContainer.setTranslationY((float) Math.ceil(avatarY));
 
                     float extra = AndroidUtilities.dp(avatarSize) * avatarScale - AndroidUtilities.dp(avatarSize);
                     timeItem.setTranslationX(avatarContainer.getX() + AndroidUtilities.dp(16) + extra);
@@ -7843,7 +7818,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             avatarImage.setAlpha(0f);
         } else {
             avatarBlurImage.setAlpha(0f);
-            avatarBlurContainer.setAlpha(0f);
             avatarImage.setAlpha(1f);
         }
     }
@@ -7967,7 +7941,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
     private boolean isOpeningTopBar() {
         float progress = getCollapsingProgress();
-        boolean isOpening = progress <= lastCollasingProgress;
+        boolean isOpening = progress < lastCollasingProgress;
         lastCollasingProgress = progress;
         return isOpening;
     }
@@ -7976,7 +7950,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         avatarX = (avatarContainer2.getMeasuredWidth() / 2f) - ((AndroidUtilities.dp(avatarSize) * avatarScale)/ 2f) ;
         avatarContainer.setTranslationX(avatarX);
         avatarBlurImage.setTranslationX(avatarX);
-        avatarBlurContainer.setTranslationX(avatarX);
     }
 
     public RecyclerListView getListView() {
@@ -9048,7 +9021,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         avatarImage.setForegroundAlpha(1.0f);
                         avatarContainer.setVisibility(View.GONE);
                         avatarBlurImage.setVisibility(View.GONE);
-                        avatarBlurContainer.setVisibility(View.GONE);
                         buttonsContainer.setVisibility(View.GONE);
                         avatarsViewPager.resetCurrentItem();
                         avatarsViewPager.setVisibility(View.VISIBLE);
@@ -11246,7 +11218,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         avatarContainer.setVisibility(View.VISIBLE);
         avatarBlurImage.setVisibility(View.VISIBLE);
-        avatarBlurContainer.setVisibility(View.VISIBLE);
         buttonsContainer.setVisibility(View.VISIBLE);
         nameTextView[1].setVisibility(View.VISIBLE);
         onlineTextView[1].setVisibility(View.VISIBLE);
@@ -11266,7 +11237,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         searchListView.setEmptyView(emptyView);
         avatarContainer.setClickable(false);
         avatarBlurImage.setClickable(false);
-        avatarBlurContainer.setClickable(false);
 
         valueAnimator.addUpdateListener(animation -> {
             searchTransitionProgress = (float) valueAnimator.getAnimatedValue();
@@ -11297,7 +11267,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             emptyView.setAlpha(1f - progressHalf);
 
             avatarContainer.setAlpha(progressHalf);
-//            avatarBluredContainer.setAlpha(progressHalf);
             buttonsContainer.setAlpha(progressHalf);
             if (storyView != null) {
                 storyView.setAlpha(progressHalf);
@@ -11380,7 +11349,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         avatarContainer.setVisibility(hide);
         avatarBlurImage.setVisibility(hide);
-        avatarBlurContainer.setVisibility(hide);
         buttonsContainer.setVisibility(hide);
         if (storyView != null) {
             storyView.setVisibility(hide);
