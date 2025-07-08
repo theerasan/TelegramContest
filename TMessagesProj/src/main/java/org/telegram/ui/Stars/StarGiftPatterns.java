@@ -250,7 +250,6 @@ public class StarGiftPatterns {
             float x = profileCenter[i];
             if (alpha <= t && alpha >0) {
                 x = (profileCenter[i] / (t/alpha));
-                System.out.println("YYYY " + profileCenter[i] + " " + (profileCenter[i] / (t/alpha)) + " " + alpha +" " +t + " " + t/alpha );
             }
             float y = profileCenter[i + 1];
             if (alpha <= t && alpha >0) {
