@@ -7769,7 +7769,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     }
                     if (expandAnimator == null || !expandAnimator.isRunning()) {
                         float d = Math.abs(getCollapsingProgress());
-                        float nameCurrentX = ((avatarContainer2.getMeasuredWidth()/2f - (nameTextView[a].getTextWidth() * nameScale)/2)) - (nameTextView[a].getPaddingLeft() * nameScale );
+                        float nameCurrentX = ((avatarContainer2.getMeasuredWidth()/2f - (nameTextView[a].getTextWidth() * nameScale)/2)) - ((nameTextView[a].getPaddingRight() * nameScale) / 2);
+                        if (nameTextView[a].getRightDrawable() != null) {
+                            nameCurrentX = nameCurrentX - ((nameTextView[a].getRightDrawable().getMinimumWidth()*nameScale)/2);
+                        }
                         float nameNewX = AndroidUtilities.lerp(nameCurrentX, AndroidUtilities.dp(62), d);
 
                         float onlineScale = onlineTextView[a].getScaleX();
