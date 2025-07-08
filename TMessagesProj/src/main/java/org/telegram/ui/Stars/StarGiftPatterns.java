@@ -242,7 +242,6 @@ public class StarGiftPatterns {
     }
 
     public static void drawProfileCenteredPattern(Canvas canvas, Drawable pattern, float w, float h, float alpha) {
-        System.out.println("XXX " + w + " " + h + " " + alpha);
         final float centerX = w/2;
         final float l = 0, centerY = AndroidUtilities.lerp(h/(2/alpha), -dp(16), 1 - alpha);
 
