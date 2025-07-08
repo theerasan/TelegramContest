@@ -5340,7 +5340,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         }
         giftsView = new ProfileGiftsView(context, currentAccount, getDialogId(), avatarContainer, avatarImage, resourcesProvider);
         avatarContainer2.addView(giftsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        avatarContainer2.addView(avatarBlurContainer, LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
+//        avatarContainer2.addView(avatarBlurContainer, LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
+        avatarContainer.setBackground(ContextCompat.getDrawable(context, R.drawable.avatar_blur_background));
         avatarContainer2.addView(avatarContainer, LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
         avatarContainer2.addView(avatarBlurImage, LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
         avatarContainer2.addView(storyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
@@ -7626,8 +7627,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
                 float s1 = 0.9f;
                 float s2 = 0.7f;
-                float s3 = 0.4f;
-                float scrollToTopStep = 1f-step;
+                float s3 = 0.45f;
 
                 if (step <= s1 && step > s2) {
                     float value = (s1-step)/(s1-s2);
@@ -7637,8 +7637,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     System.out.println("SSSS2: " + value);
                 } else if (step <= s2 && step > s3) {
                     float value = (s2-step)/(s2-s3);
-                    avatarImage.setAlpha(AndroidUtilities.lerp(0.2f, 0f, value));
-                    avatarBlurImage.setAlpha(AndroidUtilities.lerp(1f, 0f, value));
+                    avatarImage.setAlpha(AndroidUtilities.lerp(0.1f, 0f, value));
+                    avatarBlurImage.setAlpha(AndroidUtilities.lerp(0.9f, 0f, value));
                     System.out.println("SSSS3: " + value);
                 } else if (step <= s3) {
                     System.out.println("SSSS4: no anime");

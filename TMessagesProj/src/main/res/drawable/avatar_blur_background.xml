@@ -2,10 +2,10 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
 <item>
     <inset
-        android:insetRight="1dp"
-        android:insetLeft="1dp"
-        android:insetTop="1dp"
-        android:insetBottom="1dp"
+        android:insetRight="3dp"
+        android:insetLeft="3dp"
+        android:insetTop="3dp"
+        android:insetBottom="3dp"
         android:drawable="@drawable/avatar_blur_radius">
     </inset>
 </item>
