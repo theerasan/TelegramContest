@@ -7,6 +7,44 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:1013709750896:android:07e5aab9851c8743966ab5",
+        "android_client_info": {
+          "package_name": "com.theerasan.messenger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-vbgIhOvJgDo0tAgu4OD7Mzzk6f2jRQA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013709750896:android:de19aea1f593ebeb966ab5",
+        "android_client_info": {
+          "package_name": "com.theerasan.messenger.beta"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-vbgIhOvJgDo0tAgu4OD7Mzzk6f2jRQA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:1013709750896:android:f438d02576976639966ab5",
         "android_client_info": {
           "package_name": "org.telegram.messenger"
@@ -29,6 +67,44 @@
         "mobilesdk_app_id": "1:1013709750896:android:2d5251a099d4b2d7966ab5",
         "android_client_info": {
           "package_name": "org.telegram.messenger.beta"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-vbgIhOvJgDo0tAgu4OD7Mzzk6f2jRQA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013709750896:android:2c6edb8eb74e9740966ab5",
+        "android_client_info": {
+          "package_name": "org.telegram.tamessenger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-vbgIhOvJgDo0tAgu4OD7Mzzk6f2jRQA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013709750896:android:162dce848615ba32966ab5",
+        "android_client_info": {
+          "package_name": "org.telegram.tamessenger.beta"
         }
       },
       "oauth_client": [],
