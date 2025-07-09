@@ -5385,6 +5385,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         avatarContainer2.addView(avatarBlurImage, LayoutHelper.createFrame(avatarSize, avatarSize, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
         avatarContainer2.addView(storyView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         frameLayout.addView(buttonsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.dp(buttonsHeight), Gravity.TOP | Gravity.START, 12, 0, 10, 0));
+
         updateProfileData(true);
 
         frameLayout.addView(writeButton, LayoutHelper.createFrame(60, 60, Gravity.RIGHT | Gravity.TOP, 0, 0, 16, 0));
@@ -5806,9 +5807,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         float buttonsAlpha = AndroidUtilities.lerp(1f, 0f, value);
         buttonsContainer.setAlpha(buttonsAlpha);
-        buttonsContainer.setScaleY(AndroidUtilities.lerp(1, 1.2f, value));
+        buttonsContainer.setScaleY(AndroidUtilities.lerp(1, 0f, value));
         float buttonContainerY = nameY + AndroidUtilities.dp(52);
-        buttonsContainer.setTranslationY(AndroidUtilities.lerp(buttonsContainer.getY(), buttonContainerY, value));
         buttonsContainer.setTranslationY(AndroidUtilities.lerp(buttonsContainer.getY(), buttonContainerY, value));
         avatarX = (avatarContainer2.getMeasuredWidth() - (avatarContainer.getMeasuredWidth() * avatarScale)) / 2f;
         avatarContainer.setTranslationX(AndroidUtilities.lerp((float) avatarX, 0f, value));
@@ -7917,26 +7917,33 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     }
 
     private void refreshButtonsContainer() {
-        float h1 = Math.min(1f, extraHeight / AndroidUtilities.dp(secoundTopbarStepHeight));
         float factor = 1f;
+        final View view = layoutManager.findViewByPosition(0);
         if (isStartCollapsing()) {
             float diff = getCollapsingProgress() * 2;
             float value = Math.min(1, 1f - (diff));
-            float h = Math.min(1f, extraHeight / AndroidUtilities.dp(secoundTopbarStepHeight));
             factor = AndroidUtilities.lerp(1f, 0f, value);
         }
         for (int i = 0; i < buttonsContainer.getChildCount(); i++) {
             LinearLayout buttonLayout = (LinearLayout) buttonsContainer.getChildAt(i);
             ViewGroup.LayoutParams buttonLp = buttonLayout.getLayoutParams();
+            int dragDownPoint = 0;
+            if (view != null) {
+                dragDownPoint = Math.max(view.getTop() - AndroidUtilities.dp(secoundTopbarStepHeight), 0);
+            }
             int layoutHeight = (int) AndroidUtilities.lerp(0f, AndroidUtilities.dp(buttonsHeight), factor);
-            buttonLp.height = layoutHeight;
+            float scale = 0;
+            if (factor > 0) {
+                scale = Math.max((float) (layoutHeight - dragDownPoint), 1f) / layoutHeight * factor;
+            }
+            buttonLp.height = layoutHeight - dragDownPoint;
             buttonLayout.setLayoutParams(buttonLp);
             View text = buttonLayout.getChildAt(0);
             ViewGroup.LayoutParams textLp = text.getLayoutParams();
             textLp.height = layoutHeight;
             text.setLayoutParams(textLp);
-            text.setScaleX(factor);
-            text.setScaleY(factor);
+            text.setScaleX(scale);
+            text.setScaleY(scale);
         }
         buttonsContainer.setAlpha(factor);
         if (factor < 0.2f) {
@@ -7944,7 +7951,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         } else {
             buttonsContainer.setVisibility(View.VISIBLE);
         }
-        float buttonContainerY = nameY + AndroidUtilities.dp(56);
+        float buttonContainerY =  nameY + AndroidUtilities.dp(56);
         buttonsContainer.setTranslationY(buttonContainerY);
     }
 
