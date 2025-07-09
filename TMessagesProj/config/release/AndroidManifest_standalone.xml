@@ -46,7 +46,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="org.telegram.messenger.VintageIcon"
+            android:name="com.theerasan.messenger.VintageIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
             android:icon="@mipmap/icon_6_launcher_sa"
             android:roundIcon="@mipmap/icon_6_launcher_sa"
@@ -62,7 +62,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="org.telegram.messenger.AquaIcon"
+            android:name="com.theerasan.messenger.AquaIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
             android:icon="@mipmap/icon_4_launcher_sa"
             android:roundIcon="@mipmap/icon_4_launcher_sa"
@@ -78,7 +78,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="org.telegram.messenger.PremiumIcon"
+            android:name="com.theerasan.messenger.PremiumIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
             android:icon="@mipmap/icon_3_launcher_sa"
             android:roundIcon="@mipmap/icon_3_launcher_sa"
@@ -94,7 +94,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="org.telegram.messenger.TurboIcon"
+            android:name="com.theerasan.messenger.TurboIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
             android:icon="@mipmap/icon_5_launcher_sa"
             android:roundIcon="@mipmap/icon_5_launcher_sa"
@@ -110,7 +110,7 @@
 
         <activity-alias
             android:enabled="false"
-            android:name="org.telegram.messenger.NoxIcon"
+            android:name="com.theerasan.messenger.NoxIcon"
             android:targetActivity="org.telegram.ui.LaunchActivity"
             android:icon="@mipmap/icon_2_launcher_sa"
             android:roundIcon="@mipmap/icon_2_launcher_sa"

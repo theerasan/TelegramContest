@@ -7940,15 +7940,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             ViewGroup.LayoutParams textLp = text.getLayoutParams();
             textLp.height = layoutHeight;
             text.setLayoutParams(textLp);
-            text.setScaleX(scale);
-            text.setScaleY(scale);
+            if (scale > 0 && scale <= 1) {
+                text.setScaleX(scale);
+                text.setScaleY(scale);
+            }
         }
         buttonsContainer.setAlpha(factor);
-        if (factor < 0.2f) {
-            buttonsContainer.setVisibility(View.GONE);
-        } else {
-            buttonsContainer.setVisibility(View.VISIBLE);
-        }
         float buttonContainerY = nameY + AndroidUtilities.dp(56);
         buttonsContainer.setTranslationY(buttonContainerY);
     }
