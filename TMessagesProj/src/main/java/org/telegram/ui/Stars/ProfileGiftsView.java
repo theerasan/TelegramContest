@@ -15,16 +15,13 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
-import org.telegram.messenger.Utilities;
 import org.telegram.messenger.browser.Browser;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.tgnet.tl.TL_stars;
-import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
 import org.telegram.ui.Components.AnimatedFloat;
@@ -320,6 +317,30 @@ public class ProfileGiftsView extends View implements NotificationCenter.Notific
 
     public final AnimatedFloat animatedCount = new AnimatedFloat(this, 0, 320, CubicBezierInterpolator.EASE_OUT_QUINT);
 
+    private static float tolerance1 = 0.08f;
+    private static float tolerance2 = 0.16f;
+    private static float tolerance3 = 0.25f;
+    private static float tolerance4 = 0.35f;
+    private static float tolerance5 = 0.45f;
+    private static final float[] giftsLocation = new float[] {
+        /**
+         * x, y, tolerance
+         * less tolerance will start moving first
+         * */
+        // 1st row
+        -55f, -52f, tolerance1,
+        55f, -52f,  tolerance2,
+        // 2nd row
+        -100f, -16, tolerance4,
+        100f, -16, tolerance5,
+        // 3rd row
+        -80f, 28f, tolerance3,
+        80f, 28f, tolerance1,
+        // 4th row
+        -145f, 35, tolerance4,
+        145f, 35, tolerance5
+    };
+
     @Override
     protected void dispatchDraw(@NonNull Canvas canvas) {
         if (gifts.isEmpty() || expandProgress >= 1.0f) return;
@@ -332,175 +353,37 @@ public class ProfileGiftsView extends View implements NotificationCenter.Notific
         canvas.save();
         canvas.clipRect(0, 0, getWidth(), expandY);
 
-        final float acx = ax + aw / 2.0f;
-        final float cacx = Math.min(acx, dp(48));
-        final float acy = ay + ah / 2.0f;
-        final float ar = Math.min(aw, ah) / 2.0f + dp(6);
-        final float cx = getWidth() / 2.0f;
+        float progress = Math.max(1f - (avatarContainer.getScaleX() / 1.2f), 0);
 
-        final float closedAlpha = Utilities.clamp01((float) (expandY - (AndroidUtilities.statusBarHeight + ActionBar.getCurrentActionBarHeight())) / dp(50));
-
-        float progress = 1 - (avatarContainer.getScaleX() / 1.3f);
-        if (progress < 0) {
-            progress = 0f;
-        }
-        float f1 =  Math.min(15f * progress * progress, 1) ;
-        float f2 =  Math.min(20f * progress * progress, 1) ;
-        float f3 =  Math.min(50f * progress * progress, 1) ;
-
-        for (int i = 0; i < gifts.size(); ++i) {
-            final Gift gift = gifts.get(i);
-            final float alpha = gift.animatedFloat.set(1.0f);
-            final float scale = lerp(0.5f, 1.0f, alpha) * (1- progress);
-            final int index = i; // gifts.size() == maxCount ? i - 1 : i;
-            final float x = avatarContainer.getX();
-            final float y = avatarContainer.getY();
-            final float size = avatarContainer.getMeasuredWidth() * avatarContainer.getScaleX();
-            if (index == 0) {
-                float newX = AndroidUtilities.lerp(avatarContainer.getX() - AndroidUtilities.dp(24), avatarContainer.getX() + avatarContainer.getWidth()/2f + size, f3);
-                if (newX > avatarContainer.getX() + avatarContainer.getWidth()/2f) {
-                    newX = avatarContainer.getX() + avatarContainer.getWidth()/2f;
-                }
-                float newY = AndroidUtilities.lerp(avatarContainer.getY(), avatarContainer.getY() + avatarContainer.getMeasuredHeight()/2f, f3);
-                if (newY > avatarContainer.getY() + avatarContainer.getMeasuredHeight() / 2f) {
-                    newY = avatarContainer.getY() + avatarContainer.getMeasuredHeight() / 2f;
-                }
-                if (progress > 0.3) {
-                    newY = -dp(20);
-                }
-                gift.draw(
-                    canvas,
-                        newX,
-                        newY,
-                    scale, 0,
-                    alpha * (1-progress) * (1.0f - expandProgress), lerp(0.9f, 0.25f, actionBarProgress)
-                );
-            } else if (index == 1) {
-                float newX = AndroidUtilities.lerp(avatarContainer.getX() + size + AndroidUtilities.dp(24), avatarContainer.getX() - size, f2);
-                if (newX < avatarContainer.getX() + avatarContainer.getWidth()/2f) {
-                    newX = avatarContainer.getX() + avatarContainer.getWidth()/2f;
-                }
-                float newY = AndroidUtilities.lerp(avatarContainer.getY(), avatarContainer.getY() + avatarContainer.getMeasuredHeight()/2f, f2);
-                if (newY > avatarContainer.getY() + avatarContainer.getMeasuredHeight() / 2f) {
-                    newY = avatarContainer.getY() + avatarContainer.getMeasuredHeight() / 2f;
-                }
-                if (progress > 0.3) {
-                    newY = -dp(20);
-                }
-                gift.draw(
-                    canvas,
-                        newX,
-                        newY,
-                    scale,
-                        -4.0f,
-                    alpha * alpha * (1.0f - expandProgress) * (1.0f - actionBarProgress) * (closedAlpha),
-                    1.0f
-                );
-            } else if (index == 2) {
-                float newX = AndroidUtilities.lerp(avatarContainer.getX() - AndroidUtilities.dp(54), avatarContainer.getX() + size , Math.abs(f1));
-                if (newX > avatarContainer.getX() + avatarContainer.getWidth()/2f) {
-                    newX = avatarContainer.getX() + avatarContainer.getWidth()/2f;
-                }
-                float newY = AndroidUtilities.lerp(avatarContainer.getY() + size/2f - dp(4), avatarContainer.getY() + avatarContainer.getMeasuredHeight()/2f, f1);
-                if (newY < avatarContainer.getY() + avatarContainer.getMeasuredHeight() / 2f) {
-                    newY = avatarContainer.getY() + avatarContainer.getMeasuredHeight() / 2f;
-                }
-                if (progress > 0.3) {
-                    newY = -dp(20);
-                }
-                gift.draw(
-                    canvas,
-                        newX,
-                        newY ,
-                    scale, 8.0f,
-                    alpha * (1.0f - expandProgress) * (1.0f - actionBarProgress) * (closedAlpha),
-                    1.0f
-                );
-            } else if (index == 3) {
-                float newX = AndroidUtilities.lerp(avatarContainer.getX() + size + AndroidUtilities.dp(54), avatarContainer.getX(), Math.abs(f1));
-                if (newX < avatarContainer.getX() + avatarContainer.getWidth()/2f) {
-                    newX = avatarContainer.getX() + avatarContainer.getWidth()/2f;
-                }
-                float newY = AndroidUtilities.lerp(avatarContainer.getY() + size/2f - dp(4), avatarContainer.getY() + avatarContainer.getMeasuredHeight()/2f, f1);
-                if (newY < avatarContainer.getY() + avatarContainer.getMeasuredHeight() / 2f) {
-                    newY = avatarContainer.getY() + avatarContainer.getMeasuredHeight() / 2f;
-                }
-                if (progress > 0.3) {
-                    newY = -dp(20);
-                }
-                gift.draw(
-                    canvas,
-                        newX,
-                        newY,
-                        scale, 3.0f,
-                    alpha * (1.0f - expandProgress) * (1.0f - actionBarProgress) * (closedAlpha),
-                    1.0f
-                );
-            } else if (index == 4) {
-                float newX = AndroidUtilities.lerp(avatarContainer.getX() - AndroidUtilities.dp(30), avatarContainer.getX() + avatarContainer.getWidth()/2f + size, f2);
-                if (newX > avatarContainer.getX() + avatarContainer.getWidth()/2f) {
-                    newX = avatarContainer.getX() + avatarContainer.getWidth()/2f;
-                }
-                float newY = AndroidUtilities.lerp(avatarContainer.getY() + size - dp(8), avatarContainer.getY() - avatarContainer.getMeasuredHeight()/2f, f2);
-                if (newY < avatarContainer.getY() + dp(24)) {
-                    newY = avatarContainer.getY() + dp(24);
-                }
-                if (progress > 0.3) {
-                    newY = -dp(20);
-                }
-                gift.draw(
-                    canvas,
-                        newX,
-                        newY,
-                        scale, -3.0f,
-                    alpha * (1.0f - expandProgress) * (1.0f - actionBarProgress) * (closedAlpha),
-                    1.0f
-                );
-            } else if (index == 5) {
-                float newX = AndroidUtilities.lerp(avatarContainer.getX() + size + AndroidUtilities.dp(30), avatarContainer.getX() - size, f3);
-                if (newX < avatarContainer.getX() + avatarContainer.getWidth()/2f) {
-                    newX = avatarContainer.getX() + avatarContainer.getWidth()/2f;
-                }
-                float newY = AndroidUtilities.lerp(avatarContainer.getY() + size - dp(8), avatarContainer.getY() - avatarContainer.getMeasuredHeight()/2f, f2);
-                if (newY < avatarContainer.getY() + dp(24)) {
-                    newY = avatarContainer.getY() + dp(24);
-                }
-                if (progress > 0.3) {
-                    newY = -dp(20);
-                }
-                gift.draw(
-                    canvas,
-                        newX,
-                        newY,
-                        scale, 2.0f,
-                    alpha * (1-progress) * (closedAlpha),
-                    1.0f
-                );
-            } else if (index == 6) {
-                gift.draw(
-                    canvas,
-                    cacx + Math.min(getWidth() * .38f, dp(102)), expandY - dp(12),
-                    scale, 0,
-                    alpha * (1.0f - expandProgress) * (1.0f - actionBarProgress) * (closedAlpha),
-                    1.0f
-                );
-            } else if (index == 7) {
-                gift.draw(
-                    canvas,
-                    cacx + Math.min(getWidth() * .135f, dp(36)), expandY - dp(17.6f),
-                    scale, -5.0f,
-                    alpha * (1.0f - expandProgress) * (1.0f - actionBarProgress) * (closedAlpha),
-                    1.0f
-                );
-            } else if (index == 8) {
-                gift.draw(
-                    canvas,
-                    cacx + Math.min(getWidth() * .76f, dp(178)), expandY - dp(21.66f),
-                    scale, 5.0f,
-                    alpha * (1.0f - expandProgress) * (1.0f - actionBarProgress) * (closedAlpha),
-                    1.0f
-                );
+        for (int a = 0; a < Math.min(gifts.size(), 8); a++) {
+            int i = a * 3;
+            float t = giftsLocation[i + 2];
+            if (t == 0) {
+                t = 1;
             }
+            final float centerX = ax + aw / 2f;
+            final float centerY = AndroidUtilities.lerp((ay + ah / 2f) / (1 - progress), -dp(16), progress);
+            float x = AndroidUtilities.lerp(giftsLocation[i], 0f, Math.min(progress * 1 / t, 1));
+            float y = AndroidUtilities.lerp(giftsLocation[i + 1], dp(0), Math.min(progress * 1 / t, 1));
+
+            final Gift gift = gifts.get(a);
+            float alpha = AndroidUtilities.lerp(1f, 0f, Math.min(progress / 0.3f, 1f));
+            float scale = AndroidUtilities.lerp(1f, 0f, Math.min(progress / 0.5f, 1f));
+            float toRotate = 180f;
+            if (giftsLocation[i] < 0) {
+                toRotate = -toRotate;
+            }
+            float rotate = AndroidUtilities.lerp(0f, toRotate, Math.min(progress / 0.5f, 1f));
+
+            gift.draw(
+                    canvas,
+                    centerX + AndroidUtilities.dpf2(x),
+                    centerY + AndroidUtilities.dpf2(y),
+                    scale,
+                    rotate,
+                    alpha / 0.3f,
+                    alpha
+            );
         }
 
         canvas.restore();
