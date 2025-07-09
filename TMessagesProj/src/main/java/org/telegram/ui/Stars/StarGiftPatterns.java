@@ -165,19 +165,19 @@ public class StarGiftPatterns {
         // 3rd row
         -60f, -38f, 20f, 0.3f, tolerance1,
         60f, -38f, 20f, 0.3f, tolerance2,
-        // center
+        // 4th row
         -135f, 0, 16f, 0.18f, tolerance4,
         -80f, 0, 20f, 0.3f, tolerance3,
         80f, 0, 20f, 0.3f, tolerance3,
         135f, 0, 16f, 0.18f, tolerance4,
-        // 4th row
+        // 5th row
         -60f, 38f, 20f, 0.3f, tolerance2,
         60f, 38f, 20f, 0.3f, tolerance1,
-        // 5th row
+        // 6th row
         -100f, 55f, 16f, 0.18f, tolerance2,
         0f, 66f, 20f, 0.3f, tolerance1,
         100f, 55f, 16f, 0.18f, tolerance3,
-        // 6th row
+        // 7th row
         -45f, 80f, 16f, 0.18f, tolerance4,
         45f, 80f, 16f, 0.18f, tolerance5
     };
