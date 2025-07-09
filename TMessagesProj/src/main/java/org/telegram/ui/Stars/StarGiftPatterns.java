@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.ui.ActionBar.Theme;
 
 public class StarGiftPatterns {
 
@@ -146,6 +145,43 @@ public class StarGiftPatterns {
         43.33f, 1, 18.66f, .3186f
     };
 
+    /**
+     * The emoji with less tolerance moving first
+     * tolerance is in percentage value can be 0.0-1.0
+     * */
+    private static float tolerance1 = 0.15f;
+    private static float tolerance2 = 0.2f;
+    private static float tolerance3 = 0.25f;
+    private static float tolerance4 = 0.28f;
+    private static float tolerance5 = 0.3f;
+    private static final float[] profileCenter = new float[] {
+        // 1st row
+        -45f, -80f, 16f, 0.18f, tolerance4,
+        45f, -80f, 16f, 0.18f, tolerance5,
+        // 2nd row
+        -100f, -55f, 16f, 0.18f, tolerance2,
+        0f, -66f, 20f, 0.3f, tolerance1,
+        100f, -55f, 16f, 0.18f, tolerance3,
+        // 3rd row
+        -60f, -38f, 20f, 0.3f, tolerance1,
+        60f, -38f, 20f, 0.3f, tolerance2,
+        // 4th row
+        -135f, 0, 16f, 0.18f, tolerance4,
+        -80f, 0, 20f, 0.3f, tolerance3,
+        80f, 0, 20f, 0.3f, tolerance3,
+        135f, 0, 16f, 0.18f, tolerance4,
+        // 5th row
+        -60f, 38f, 20f, 0.3f, tolerance2,
+        60f, 38f, 20f, 0.3f, tolerance1,
+        // 6th row
+        -100f, 55f, 16f, 0.18f, tolerance2,
+        0f, 66f, 20f, 0.3f, tolerance1,
+        100f, 55f, 16f, 0.18f, tolerance3,
+        // 7th row
+        -45f, 80f, 16f, 0.18f, tolerance4,
+        45f, 80f, 16f, 0.18f, tolerance5
+    };
+
     public static void drawProfilePattern(Canvas canvas, Drawable pattern, float w, float h, float alpha, float full) {
         if (alpha <= 0.0f) return;
 
@@ -209,4 +245,34 @@ public class StarGiftPatterns {
         }
     }
 
+    public static void drawProfileCenteredPattern(Canvas canvas, Drawable pattern, float w, float h, float alpha) {
+        final float centerX = w / 2;
+        final float centerY = AndroidUtilities.lerp(h / (2 / alpha), -dp(16), 1 - alpha);
+        for (int i = 0; i < profileCenter.length; i += 5) {
+            final float t = profileCenter[i + 4];
+            float floor = 1 - t;
+            if (floor == 0) {
+                floor = 1;
+            }
+            float progress = Math.max(0, (1 - alpha - t)) / floor;
+            float x = AndroidUtilities.lerp(profileCenter[i], 0f, Math.min(progress * 1 / t, 1));
+            float y = AndroidUtilities.lerp(profileCenter[i + 1], dp(0), Math.min(progress * 1 / t, 1));
+            if (alpha == 0) {
+                x = 0;
+                y = 0;
+            }
+            final float size = profileCenter[i + 2] * alpha;
+            final float thisAlpha = profileCenter[i + 3];
+
+            pattern.setBounds(
+                    (int) (centerX + dpf2(x) - dpf2(size) / 2.0f),
+                    (int) (centerY + dpf2(y) - dpf2(size) / 2.0f),
+                    (int) (centerX + dpf2(x) + dpf2(size) / 2.0f),
+                    (int) (centerY + dpf2(y) + dpf2(size) / 2.0f)
+            );
+
+            pattern.setAlpha((int) (0xFF * alpha * thisAlpha));
+            pattern.draw(canvas);
+        }
+    }
 }

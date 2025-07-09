@@ -3884,6 +3884,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         avatarContainer.premiumIconHiddable = true;
         avatarContainer.allowDrawStories = dialog_id < 0 && !isTopic;
         avatarContainer.setClipChildren(false);
+        // Hide image to make the view sync when profile is collapsed
+        avatarContainer.avatarImageView.setVisibility(View.GONE);
         AndroidUtilities.updateViewVisibilityAnimated(avatarContainer, true, 1f, false);
         updateTopicTitleIcon();
         if (inPreviewMode || inBubbleMode || isInsideContainer) {
