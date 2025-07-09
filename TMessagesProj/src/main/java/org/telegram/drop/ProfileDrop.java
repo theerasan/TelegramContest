@@ -20,10 +20,9 @@ public class ProfileDrop {
             paint.setStyle(Paint.Style.FILL);
         }
 
-        float inset = AndroidUtilities.dp(0);
-        float radius = Math.min(AndroidUtilities.dp(62), ((avatarContainer.getMeasuredWidth() * avatarContainer.getScaleX()) / 2) - inset);
-        float centerX = w / 2 + inset;
-        float centerY = avatarContainer.getY() + radius + inset;
+        float radius = Math.min(AndroidUtilities.dp(62), (avatarContainer.getMeasuredWidth() * avatarContainer.getScaleX()) / 2);
+        float centerX = w / 2;
+        float centerY = avatarContainer.getY() + radius;
 
         if (avatarContainer.getScaleY() < 1.2f) {
             // draw a circle behind the avatar
