@@ -3976,8 +3976,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         listView.setLayoutManager(layoutManager);
         listView.setGlowColor(0);
         listView.setAdapter(listAdapter);
-
-
         frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT));
         listView.setOnItemClickListener((view, position, x, y) -> {
             if (getParentActivity() == null) {
@@ -7951,7 +7949,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         } else {
             buttonsContainer.setVisibility(View.VISIBLE);
         }
-        float buttonContainerY =  nameY + AndroidUtilities.dp(56);
+        float buttonContainerY = nameY + AndroidUtilities.dp(56);
         buttonsContainer.setTranslationY(buttonContainerY);
     }
 
@@ -11078,7 +11076,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         LinearLayout l = new LinearLayout(context);
         l.setOrientation(LinearLayout.VERTICAL);
         l.setGravity(Gravity.CENTER);
-        Drawable bg = ResourcesCompat.getDrawable(context.getResources(), R.drawable.profile_button_background, context.getTheme());
+        Drawable bg = ContextCompat.getDrawable(context, R.drawable.profile_button_background);
         l.setBackground(bg);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             l.setClipToOutline(true);
