@@ -151,31 +151,31 @@ public class StarGiftPatterns {
     private static float tolerence3 = 0.75f;
     private static float tolerence4 = 0.6f;
     private static final float[] profileCenter = new float[] {
-            // 1st row
-            -45f, -80f, 16f, 0.18f, tolerence4,
-            45f, -80f, 16f, 0.18f, tolerence4,
-            // 2nd row
-            -100f, -55f, 16f, 0.18f, tolerence2,
-            0f, -66f, 20f, 0.3f, tolerence2,
-            100f, -55f, 16f, 0.18f, tolerence2,
-            // 3rd row
-            -60f, -38f, 20f, 0.3f, tolerence1,
-            60f, -38f, 20f, 0.3f, tolerence1,
-            // center
-            -135f, 0, 16f, 0.18f, tolerence4,
-            -80f, 0, 20f, 0.3f, tolerence3,
-            80f, 0, 20f, 0.3f, tolerence3,
-            135f, 0, 16f, 0.18f, tolerence4,
-            // 4th row
-            -60f, 38f, 20f, 0.3f, tolerence1,
-            60f, 38f, 20f, 0.3f, tolerence1,
-            // 5th row
-            -100f, 55f, 16f, 0.18f, tolerence2,
-            0f, 66f, 20f, 0.3f, tolerence2,
-            100f, 55f, 16f, 0.18f, tolerence2,
-            // 6th row
-            -45f, 80f, 16f, 0.18f, tolerence4,
-            45f, 80f, 16f, 0.18f, tolerence4
+        // 1st row
+        -45f, -80f, 16f, 0.18f, tolerence4,
+        45f, -80f, 16f, 0.18f, tolerence4,
+        // 2nd row
+        -100f, -55f, 16f, 0.18f, tolerence2,
+        0f, -66f, 20f, 0.3f, tolerence2,
+        100f, -55f, 16f, 0.18f, tolerence2,
+        // 3rd row
+        -60f, -38f, 20f, 0.3f, tolerence1,
+        60f, -38f, 20f, 0.3f, tolerence1,
+        // center
+        -135f, 0, 16f, 0.18f, tolerence4,
+        -80f, 0, 20f, 0.3f, tolerence3,
+        80f, 0, 20f, 0.3f, tolerence3,
+        135f, 0, 16f, 0.18f, tolerence4,
+        // 4th row
+        -60f, 38f, 20f, 0.3f, tolerence1,
+        60f, 38f, 20f, 0.3f, tolerence1,
+        // 5th row
+        -100f, 55f, 16f, 0.18f, tolerence2,
+        0f, 66f, 20f, 0.3f, tolerence2,
+        100f, 55f, 16f, 0.18f, tolerence2,
+        // 6th row
+        -45f, 80f, 16f, 0.18f, tolerence4,
+        45f, 80f, 16f, 0.18f, tolerence4
     };
 
     public static void drawProfilePattern(Canvas canvas, Drawable pattern, float w, float h, float alpha, float full) {
