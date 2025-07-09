@@ -64,6 +64,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
 import android.net.Uri;
@@ -129,6 +130,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import org.jetbrains.annotations.NotNull;
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
@@ -1013,7 +1015,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     // my new variable
     private static float secoundTopbarStepHeight = 188f;
     private static float avatarSize = 62f;
-    private static float buttonsHeight = 28f;
+    private static float buttonsHeight = 62f;
     private static HashSet<Integer> menuSet = new HashSet<Integer>();
     private static int writeButtonsId = 256;
 
@@ -7927,21 +7929,23 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
     private void refreshButtonsContainer() {
         float h1 = Math.min(1f, extraHeight / AndroidUtilities.dp(secoundTopbarStepHeight));
-        System.out.println("VVVV h " + h1);
         float factor = 1f;
         if (isStartCollapsing()) {
             float diff = getCollapsingProgress() * 2;
             float value = Math.min(1, 1f - (diff));
             float h = Math.min(1f, extraHeight / AndroidUtilities.dp(secoundTopbarStepHeight));
             factor = AndroidUtilities.lerp(1f, 0f, value);
-            System.out.println("VVV va " + value + " " + h + " " + factor);
         }
         for (int i = 0; i < buttonsContainer.getChildCount(); i++) {
-            LinearLayout l = (LinearLayout) buttonsContainer.getChildAt(i);
-            ViewGroup.LayoutParams lp = l.getLayoutParams();
-            lp.height = AndroidUtilities.dp(buttonsHeight * factor * 2);
-            l.setLayoutParams(lp);
-            View text = l.getChildAt(0);
+            LinearLayout buttonLayout = (LinearLayout) buttonsContainer.getChildAt(i);
+            ViewGroup.LayoutParams buttonLp = buttonLayout.getLayoutParams();
+            int layoutHeight = (int) AndroidUtilities.lerp(0f, AndroidUtilities.dp(buttonsHeight), factor);
+            buttonLp.height = layoutHeight;
+            buttonLayout.setLayoutParams(buttonLp);
+            View text = buttonLayout.getChildAt(0);
+            ViewGroup.LayoutParams textLp = text.getLayoutParams();
+            textLp.height = layoutHeight;
+            text.setLayoutParams(textLp);
             text.setScaleX(factor);
             text.setScaleY(factor);
         }
@@ -10701,7 +10705,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     otherItem.addSubItem(add_photo, R.drawable.msg_addphoto, LocaleController.getString(R.string.AddPhoto));
                 }
                 editColorItem = otherItem.addSubItem(edit_color, R.drawable.menu_profile_colors, LocaleController.getString(R.string.ProfileColorEdit));
-                addProfilesMenu(add_photo, R.drawable.menu_profile_colors);
+                addProfilesMenu(edit_color, R.drawable.menu_profile_colors);
                 updateEditColorIcon();
                 if (myProfile) {
                     setUsernameItem = otherItem.addSubItem(set_username, R.drawable.menu_username_change, getString(R.string.ProfileUsernameEdit));
@@ -10997,7 +11001,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 LinearLayout.LayoutParams lp = LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(buttonsHeight), 0, 0, 6, 0);
                 lp.weight = 1;
                 LinearLayout l = getProfileButtonLayout(context);
-                l.addView(tv, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(buttonsHeight), dp(0), dp(12), dp(0), dp(0)));
+                l.addView(tv, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(buttonsHeight), dp(0), dp(0), dp(0), dp(0)));
                 buttonsContainer.addView(l, lp);
             }
         }
@@ -11019,7 +11023,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 LinearLayout.LayoutParams lp = LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(buttonsHeight), 0, 0, 6, 0);
                 lp.weight = 1;
                 LinearLayout l = getProfileButtonLayout(context);
-                l.addView(tv, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(buttonsHeight), dp(0), dp(12), dp(0), dp(0)));
+                l.addView(tv, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(buttonsHeight), dp(0), dp(0), dp(0), dp(0)));
                 buttonsContainer.addView(l, lp);
             }
         }
@@ -11043,34 +11047,35 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     LinearLayout.LayoutParams lp = LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(buttonsHeight), 0, 0, 6, 0);
                     lp.weight = 1;
                     LinearLayout l = getProfileButtonLayout(context);
-                    l.addView(tv, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(buttonsHeight), dp(0), dp(12), dp(0), dp(0)));
+                    l.addView(tv, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, dp(buttonsHeight), dp(0), dp(0), dp(0), dp(0)));
                     buttonsContainer.addView(l, lp);
                 }
             }
         }
     }
 
-    private TextView getProfileTextView(Context context, CharSequence label, Drawable drawable) {
+    private TextView getProfileTextView(Context context, CharSequence label, @NotNull Drawable drawable) {
         TextView tv = new TextView(context);
         tv.setText(label);
         tv.setTextAlignment(TEXT_ALIGNMENT_CENTER);
         tv.setGravity(Gravity.CENTER);
         drawable.setBounds(0, 0, dp(24), dp(24));
-        tv.setCompoundDrawablesRelative(null, drawable, null, null);
-
-//        tv.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
-//        tv.setCompoundDrawablePadding(dp(2));
+        tv.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+        tv.setCompoundDrawablePadding(-dp(8));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             TextViewCompat.setCompoundDrawableTintList(tv, new ColorStateList(profileButtonStates, profileButtonColors));
         }
         tv.setTextColor(new ColorStateList(profileButtonStates, profileButtonColors));
         tv.setTextSize(11);
-//        int[] attrs = new int[]{R.attr.selectableItemBackground};
-//        TypedArray typedArray = context.obtainStyledAttributes(attrs);
-//        int backgroundResource = typedArray.getResourceId(0, 0);
-//        tv.setBackgroundResource(backgroundResource);
-        tv.setPadding(dp(4), dp(0), dp(4), dp(0));
+        tv.setPadding(dp(4), dp(6), dp(4), dp(0));
         tv.setAlpha(0.85f);
+
+        int[] attrs = new int[]{R.attr.selectableItemBackground};
+        int backgroundResource;
+        try (TypedArray typedArray = context.obtainStyledAttributes(attrs)) {
+            backgroundResource = typedArray.getResourceId(0, 0);
+        }
+        tv.setBackgroundResource(backgroundResource);
         return tv;
     }
 
