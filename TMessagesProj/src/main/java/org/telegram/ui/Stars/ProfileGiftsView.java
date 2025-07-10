@@ -6,6 +6,7 @@ import static org.telegram.ui.Stars.StarsController.findAttribute;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RadialGradient;
@@ -16,6 +17,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import org.telegram.drop.ProfileDrop;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
@@ -200,7 +202,7 @@ public class ProfileGiftsView extends View implements NotificationCenter.Notific
             final float scale = ascale * bounce.getScale(0.1f);
             canvas.scale(scale, scale);
             if (gradientPaint != null) {
-                gradientPaint.setAlpha((int) (0xFF * alpha * gradientAlpha));
+                gradientPaint.setAlpha((int) (0xFF * alpha));
                 canvas.drawRect(-gsz / 2.0f, -gsz / 2.0f, gsz / 2.0f, gsz / 2.0f, gradientPaint);
             }
             if (emojiDrawable != null) {
@@ -317,6 +319,7 @@ public class ProfileGiftsView extends View implements NotificationCenter.Notific
 
     public final AnimatedFloat animatedCount = new AnimatedFloat(this, 0, 320, CubicBezierInterpolator.EASE_OUT_QUINT);
 
+    private static Paint paint;
     private static float tolerance1 = 0.08f;
     private static float tolerance2 = 0.16f;
     private static float tolerance3 = 0.25f;
@@ -353,6 +356,13 @@ public class ProfileGiftsView extends View implements NotificationCenter.Notific
         canvas.save();
         canvas.clipRect(0, 0, getWidth(), expandY);
 
+        if (paint == null) {
+            paint = new Paint();
+            paint.setColor(Color.BLACK);
+            paint.setAntiAlias(true);
+            paint.setStyle(Paint.Style.FILL);
+        }
+
         float progress = Math.max(1f - (avatarContainer.getScaleX() / 1.2f), 0);
 
         for (int a = 0; a < Math.min(gifts.size(), 8); a++) {
@@ -367,7 +377,7 @@ public class ProfileGiftsView extends View implements NotificationCenter.Notific
             float y = AndroidUtilities.lerp(giftsLocation[i + 1], dp(0), Math.min(progress * 1 / t, 1));
 
             final Gift gift = gifts.get(a);
-            float alpha = AndroidUtilities.lerp(1f, 0f, Math.min(progress / 0.3f, 1f));
+            float alpha = AndroidUtilities.lerp(1f, 0f, Math.min(progress / 0.3f, 1f)) * gift.animatedFloat.set(1.0f);
             float scale = AndroidUtilities.lerp(1f, 0f, Math.min(progress / 0.5f, 1f));
             float toRotate = 180f;
             if (giftsLocation[i] < 0) {
@@ -384,6 +394,14 @@ public class ProfileGiftsView extends View implements NotificationCenter.Notific
                     alpha / 0.3f,
                     alpha
             );
+        }
+
+        float radius = Math.min(AndroidUtilities.dp(62), ((avatarContainer.getMeasuredWidth() * avatarContainer.getScaleX()) / 2));
+        final float centerX = ax + aw / 2f;
+        float centerY = avatarContainer.getY() + radius;
+        if (avatarContainer.getScaleY() < 1.2f) {
+            // draw a circle overlay gifts
+            canvas.drawCircle(centerX, centerY, radius, paint);
         }
 
         canvas.restore();
