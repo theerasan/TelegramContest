@@ -1018,8 +1018,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private static float buttonsHeight = 62f;
     private static HashSet<Integer> menuSet = new HashSet<Integer>();
     private static int writeButtonsId = 256;
-
-    private float lastCollasingProgress = 0;
     private static int[][] profileButtonStates = new int[][]{
             new int[]{android.R.attr.state_enabled}, // enabled
             new int[]{-android.R.attr.state_enabled}, // disabled
@@ -3803,7 +3801,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             @Override
             public boolean onTouchEvent(MotionEvent e) {
                 final int action = e.getAction();
-                boolean isMoveDown = isOpeningTopBar();
                 if (action == MotionEvent.ACTION_DOWN) {
                     if (velocityTracker == null) {
                         velocityTracker = VelocityTracker.obtain();
@@ -3838,21 +3835,19 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     } else {
                         final View view = layoutManager.findViewByPosition(0);
                         if (view != null) {
-                            int position = 0;
-                            if (isStartCollapsing()) {
-                                if (isMoveDown) {
-                                    position = view.getTop() - AndroidUtilities.dp(secoundTopbarStepHeight);
-                                } else {
-                                    position = view.getTop();
-                                }
-                                listView.smoothScrollBy(0, position, CubicBezierInterpolator.EASE_OUT_QUINT);
+                            /**
+                             * If 20% of the avatar top is gone, this can determine that user intends to collapse the toolbar
+                             * In the other hand, if avatar top gone less than 20%, the toolbar should open
+                             * - Add this check as an added feature to make the top view not struck in the middle state.
+                             *   There for the top view will always;
+                             *   1. collapse
+                             *   2. show avatar with gift and background
+                             *   3. show full avartar
+                             * */
+                            if (avatarContainer.getY() < -(avatarContainer.getMeasuredHeight() * avatarContainer.getScaleY() / 5)) {
+                                listView.smoothScrollBy(0, view.getTop(), CubicBezierInterpolator.EASE_OUT_QUINT);
                             } else {
-                                if (isMoveDown) {
-                                    position = view.getTop();
-                                } else {
-                                    position = view.getTop() - AndroidUtilities.dp(secoundTopbarStepHeight);
-                                }
-                                listView.smoothScrollBy(0, position, CubicBezierInterpolator.EASE_OUT_QUINT);
+                                listView.smoothScrollBy(0, view.getTop() - AndroidUtilities.dp(secoundTopbarStepHeight), CubicBezierInterpolator.EASE_OUT_QUINT);
                             }
                         }
                     }
@@ -7956,13 +7951,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
     private float getCollapsingProgress() {
         return Math.min(1f, extraHeight / AndroidUtilities.dp(secoundTopbarStepHeight));
-    }
-
-    private boolean isOpeningTopBar() {
-        float progress = getCollapsingProgress();
-        boolean isOpening = progress < lastCollasingProgress;
-        lastCollasingProgress = progress;
-        return isOpening;
     }
 
     private void refreshAvatar() {
