@@ -208,7 +208,7 @@ public class ProfileGiftsView extends View implements NotificationCenter.Notific
             if (emojiDrawable != null) {
                 final int sz = dp(24);
                 emojiDrawable.setBounds(-sz / 2, -sz / 2, sz / 2, sz / 2);
-                emojiDrawable.setAlpha((int) (0xFF * alpha));
+                emojiDrawable.setAlpha((int) (0xFF * alpha * gradientAlpha));
                 emojiDrawable.draw(canvas);
             }
             canvas.restore();
@@ -391,7 +391,7 @@ public class ProfileGiftsView extends View implements NotificationCenter.Notific
                     centerY + AndroidUtilities.dpf2(y),
                     scale,
                     rotate,
-                    alpha / 0.3f,
+                    alpha,
                     alpha
             );
         }
