@@ -50,6 +50,12 @@ I combined my name, Ta, with Telegram to create the name of my app: **Ta-legram*
 2. I named the app "Ta-legram", and "B - Ta-legram" for the beta version.
 3. The app still supports switching to the existing predefined icons.
 
+
+### Result
+
+https://github.com/user-attachments/assets/f700143b-1ec6-4bc5-a9ae-e9de4341449a
+
+
 ---
 
 ## Telegram messenger for Android
